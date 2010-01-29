@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load repositories %}
+
+{% block media %}
+  {{ block.super }}
+  <link href="{{ MEDIA_URL }}djpro/css/repo.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block title %}{% trans "Repository" %} {{ repo.path|name }}{% endblock %}
+
+{% block content %}
+  <div class="repository">
+    <table border="0">
+        <tr>
+            <th>Commit</th>
+            <th>Message</th>
+            <th>Author</th>
+            <th>Date</th>
+        </tr>
+        {% for commit in repo.commits %}
+        <tr>
+            <td><a href="{% url djpro:repo-commit repo.path|mangled commit %}">{{ commit|first_eight }}</a></td>
+            <td>{{ commit.message }}</td>
+            <td>{{ commit.committer.name }}</td>
+            <td>{{ commit.committed_date|tuple_to_date|date:"m/d/Y" }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    {% if repo.heads %}
+        <h3>Heads</h3>
+        <ul>
+            {% for head in repo.heads %}
+            <li>{{ head.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+  </div>
+{% endblock %}
