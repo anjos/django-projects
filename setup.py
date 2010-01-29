@@ -35,7 +35,7 @@ setup(
       'docutils',
       'gitpython',
       'PIL>=1.1.6',
-      'Pygments',
+      'Pygments>=1.2',
       ],
 
     dependency_links = [
