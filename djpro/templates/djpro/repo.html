@@ -11,31 +11,45 @@
 {% block title %}{% trans "Repository" %} {{ repo.path|name }}{% endblock %}
 
 {% block content %}
+
   <div class="repository">
-    <table border="0">
+    <div class="summary">
+      <p>{% trans "Summary" %}</p>
+      <table>
+        <tr><th>{% trans "description" %}</th><td>{{ repo.description }}</td></tr>
+        <tr><th>{% trans "last change" %}</th><td>{{ repo.commits.0.committed_date|tuple_to_date|date:"r" }}</td></tr>
+        <!--<tr><th>{% trans "url" %}</th><td></td></tr>-->
+      </table>
+    </div>
+
+    {% if repo.heads %}
+    <div class="heads">
+      <p>{% trans "Heads" %}</p>
+      <ul>
+          {% for head in repo.heads %}
+          <li>{{ head.name }}</li>
+          {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <div class="shortlog">
+      <p>{% trans "Shortlog" %} ({{ repo.commit_count }} {% trans "commits" %})</p>
+      <table>
+        {% for commit in commits %}
         <tr>
-            <th>Commit</th>
-            <th>Message</th>
-            <th>Author</th>
-            <th>Date</th>
-        </tr>
-        {% for commit in repo.commits %}
-        <tr>
-            <td><a href="{% url djpro:repo-commit repo.path|mangled commit %}">{{ commit|first_eight }}</a></td>
-            <td>{{ commit.message }}</td>
-            <td>{{ commit.committer.name }}</td>
-            <td>{{ commit.committed_date|tuple_to_date|date:"m/d/Y" }}</td>
+          <td>{{ commit.committed_date|tuple_to_date|date:"m/d/Y" }}</td>
+          <td>{{ commit.committer.name }}</td>
+          <td>{{ commit.message }}</td>
+          <td>
+            <a href="{% url djpro:view-commit commit %}?r={{ repo.path|name }}">{% trans "commit" %}</a>
+            <a href="{% url djpro:view-diff commit %}?r={{ repo.path|name }}">{% trans "diff" %}</a>
+            <a href="{% url djpro:view-tree commit %}?r={{ repo.path|name }}">{% trans "tree" %}</a>
+          </td>
         </tr>
         {% endfor %}
-    </table>
-    
-    {% if repo.heads %}
-        <h3>Heads</h3>
-        <ul>
-            {% for head in repo.heads %}
-            <li>{{ head.name }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+      </table>
+    </div>
+
   </div>
 {% endblock %}

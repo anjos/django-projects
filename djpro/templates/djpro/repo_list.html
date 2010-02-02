@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load repositories %}
+
+{% block media %}
+  {{ block.super }}
+  <link href="{{ MEDIA_URL }}djpro/css/repo.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block title %}{% trans "Repositories" %}{% endblock %}
+
+{% block content %}
+  <div class="repository">
+    <table>
+      <tr>
+        <th>{% trans "Project" %}</th>
+        <th>{% trans "Description" %}</th>
+        <th>{% trans "Owner" %}</th>
+        <th>{% trans "Last change" %}</th>
+      </tr>
+      {% for repo in repos %}
+      <tr class="{% cycle 'even' 'odd' %}">
+        <td><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{{ repo.path|name }}</a></td>
+        <td><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{{ repo.description }}</a></td>
+        <td>{{ repo.commits.0.author.name }}</td>
+        <td>{{ repo.commits.0.committed_date|relative_date }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}

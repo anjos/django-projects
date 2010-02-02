@@ -21,7 +21,6 @@ setup(
         'templates/djpro/feeds/*.html',
         'media/css/*.css',
         'media/img/*',
-        'media/js/*',
         'locale/*/LC_MESSAGES/django.po',
         'locale/*/LC_MESSAGES/django.mo',
         ],
@@ -36,6 +35,7 @@ setup(
       'gitpython',
       'PIL>=1.1.6',
       'Pygments>=1.2',
+      'dateutils',
       ],
 
     dependency_links = [

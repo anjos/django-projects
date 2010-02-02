@@ -46,10 +46,12 @@ urlpatterns = patterns('',
                            name='note'),
 
                        # urls concerning git repositories access
-                       url(r'^repo/$', repo_index, name='repo-index'),
-                       url(r'^repo/(?P<repo>[\@\w_-]+)/$', repo, name='view-repo'),
-                       url(r'^repo/(?P<repo>[\@\w_-]+)/commit/(?P<commit>[\w\d]+)/$', repo_commit, name='repo-commit'),
-                       url(r'^repo/(?P<repo>[\@\w_-]+)/commit/(?P<commit>[\w\d]+)/blob/$', repo_blob, name='repo-blob'),
+                       url(r'^repo/$', repo_detail, name='view-repo'),
+                       url(r'^repo/commit/(?P<commit>[\w\d]+)/$', repo_commit, name='view-commit'),
+                       url(r'^repo/diff/(?P<commit>[\w\d]+)/$', repo_diff, name='view-diff'),
+                       url(r'^repo/blob/(?P<commit>[\w\d]+)/$', repo_blob, name='view-blob'),
+                       url(r'^repo/raw/(?P<commit>[\w\d]+)/$', repo_raw, name='view-raw'),
+                       url(r'^repo/tree/(?P<commit>[\w\d]+)/$', repo_tree, name='view-tree'),
                       
                        # entry key for projects
                        url(r'^(?P<slug>\w+)/$', 
