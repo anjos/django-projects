@@ -8,7 +8,7 @@
 <link href="{{ MEDIA_URL }}djpro/css/repo.css" rel="stylesheet" type="text/css" media="screen" />
 {% endblock %}
 
-{% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {% trans "Commit" %} {{ commit|first_eight }}{% endblock %}
+{% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {% trans "History" %} {% endblock %}
 
 {% block content %}
 <div class="repository">

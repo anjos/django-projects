@@ -38,15 +38,21 @@ def repo_detail(request, template_name='djpro/repo.html'):
       {'repo': r, 'commits': c}, 
       context_instance=RequestContext(request))
 
-def repo_file_history(request, template_name='djpro/repo_file_history.html'):
+def repo_history(request, commit=None, template_name='djpro/repo_history.html'):
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 
   if not request.GET.has_key('b'): raise ObjectDoesNotExist
+  if not commit and c: commit == c[0].id
 
   p = request.GET['b']
   r = get_repo(request.GET['r'])
   c = r.commits(max_count=r.commit_count())
+
+  found = False
   keep = []
   for k in c: # browse all commits see if the path is in any of them.
+    if not found and commit == k.id: found = True
+    else: continue
+
     for d in k.diffs:
       if d.b_path and d.b_path.find(p) == 0: keep.append((k, d))
       elif d.a_path and d.a_path.find(p) == 0: # maybe it was moved
