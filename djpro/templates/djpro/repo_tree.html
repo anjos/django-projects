@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% load repositories %}
+
+{% block media %}
+{{ block.super }}
+<link href="{{ MEDIA_URL }}djpro/css/repo.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {{ p }}{% endblock %}
+
+{% block content %}
+<div class="repository">
+  <div class="navigation">
+  <p class="section-title">{% trans "Repository navigation" %}</p>
+    <p><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "summary" %}</a> | <a href="{% url djpro:view-commit commit %}?r={{ repo.path|name }}">{% trans "commit" %}</a>{% if commit.parents %} | <a href="{% url djpro:view-commit commit.parents.0 %}?r={{ repo.path|name }}">{% trans "previous" %}</a>{% endif %}</p>
+  </div>
+
+  {% with tree|last as tl %}
+  <div class="browser">
+    <table>
+      <tr><th>path</th><td>{% for p in tree|slice:"1:-1" %} / <a href="{% url djpro:view-tree commit %}?r={{ repo.path }}{% if p.0 %}&t={{ p.0 }}{% endif %}">{{ p.0 }}</a>{% endfor %} / {{ tl.0 }}</td></tr>
+    <table>
+  </div>
+
+  <div class="tree">
+  <p class="section-title">{% trans "Tree view" %}</p>
+    <table>
+      <tr><th colspan="4">{% trans "actions" %}</th>
+        <th>{% trans "mode" %}</th>
+        <th>{% trans "path" %}</th>
+        <th>{% trans "date" %}</th>
+        <th>{% trans "author" %}</th>
+        <th>{% trans "summary" %}</th>
+        <th>{% trans "information" %}</th>
+      </tr>
+    {% for name,obj in tl.1.items %}
+    <!-- {% cycle 'even' 'odd' as oddity %} -->
+    
+    {% if obj|is_tree %}
+    <tr class="tree {{ oddity }}"> 
+      
+    <td class="action"><a href="{% url djpro:view-diff commit %}?r={{ repo.path|name }}&b={% merge_path path name %}" title="{% trans 'view differences done at this directory for this commit' %}">{% trans "diff" %}</a></td>
+    <td class="action"><a href="{% url djpro:view-tree commit %}?r={{ repo.path|name }}&t={% merge_path path name %}" title="{% trans 'view this directory after this commit' %}">{% trans "tree" %}</a></td>
+    <td class="action"><a href="{% url djpro:download-tree commit %}?r={{ repo.path|name }}&t={% merge_path path name %}" title="{% trans 'download this tree' %}">{% trans "download" %}</a></td>
+    <td class="action"></td>
+    <td class="mode">{{ obj.mode|mode }}</td>
+    <td class="path">{{ name }}</td>
+
+    </tr>
+    {% else %}
+
+    <tr class="blob {{ oddity }}"> 
+
+    <td class="action"><a href="{% url djpro:view-diff commit %}?r={{ repo.path|name }}&b={% merge_path path name %}" title="{% trans 'view differences done at this file for this commit' %}">{% trans "diff" %}</a></td>
+    <td class="action"><a href="{% url djpro:view-blob commit %}?r={{ repo.path|name }}&b={% merge_path path name %}" title="{% trans 'view this file after this commit' %}">{% trans "view" %}</a></td>
+    <td class="action"><a href="{% url djpro:view-raw commit %}?r={{ repo.path|name }}&b={% merge_path path name %}" title="{% trans 'download this file' %}">{% trans "download" %}</a></td>
+    <td class="action"><a href="{% url djpro:view-history commit %}?r={{ repo.path|name }}&b={% merge_path path name %}" title="{% trans 'access the commit history for this file only' %}">{% trans "history" %}</a></td>
+    <td class="mode">{{ obj.mode|mode }}</td>
+    <td class="path">{{ name }}</td>
+
+    </tr>
+
+    {% endif %}
+
+    {% endfor %}
+    <table>
+  </div>
+  {% endwith %}
+
+</div>
+{% endblock %}

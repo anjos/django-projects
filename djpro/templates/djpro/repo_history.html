@@ -8,59 +8,57 @@
 <link href="{{ MEDIA_URL }}djpro/css/repo.css" rel="stylesheet" type="text/css" media="screen" />
 {% endblock %}
 
-{% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {% trans "History" %} {% endblock %}
+{% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {% trans "History of" %} {{ path }}{% endblock %}
 
 {% block content %}
 <div class="repository">
+  {% with commits.0.0 as latest %}
   <div class="navigation">
-    <p><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "summary" %}</a> | <a href="{% url djpro:view-diff commit %}?r={{ repo.path|name }}">{% trans "diff" %}</a>{% if commit.parents %} | <a href="{% url djpro:view-commit commit.parents.0 %}?r={{ repo.path|name }}">{% trans "previous" %}</a>{% endif %}</a></p>
+    <p class="section-title">{% trans "Repository navigation" %}</p>
+    <p><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "summary" %}</a> | <a href="{% url djpro:view-diff latest %}?r={{ repo.path|name }}">{% trans "diff" %}</a>{% if latest.parents %} | <a href="{% url djpro:view-commit latest.parents.0 %}?r={{ repo.path|name }}">{% trans "previous" %}</a>{% endif %}</a></p>
   </div>
 
-  <div class="summary">
-    <p>{{ commit.summary }}</p>
-    <table>
-      <tr><th>{% trans "author" %}</th><td>{{ commit.author.name }} &lt;{{ commit.author.email }}&gt; {% trans "at" %} {{ commit.authored_date|tuple_to_date|date:"r" }}</td></tr>
-      <tr><th>{% trans "committer" %}</th><td>{{ commit.committer.name }} &lt;{{ commit.committer.email }}&gt; {% trans "at" %} {{ commit.committed_date|tuple_to_date|date:"r" }}</td></tr>
-      <tr><th>{% trans "commit" %}</th><td>{{ commit.id }}</td></tr>
-      <tr><th>{% trans "tree" %}</th><td>{{ commit.tree.id }}</td></tr>
-      <tr><th>{% trans "parent" %}</th><td>{{ commit.parents.0.id }}</td></tr>
-    </table>
-  </div>
+  <div class="path"><p>/ {{ path }}</p></div>
 
-  <div class="description">
-    <p>{{ commit.message }}</p>
-  </div>
-
-  {% if commit.diffs %}
   <div class="changes">
+    <p class="section-title">{% trans "Changes" %}</p>
     <table>
-    {% for d in commit.diffs %}
+      <tr><th colspan="4">{% trans "actions" %}</th>
+        <th>{% trans "mode" %}</th>
+        <th>{% trans "path" %}</th>
+        <th>{% trans "date" %}</th>
+        <th>{% trans "author" %}</th>
+        <th>{% trans "summary" %}</th>
+        <th>{% trans "information" %}</th>
+      </tr>
+    {% for commit,d in commits %}
     <!-- {% cycle 'even' 'odd' as oddity %} -->
     {% if d.deleted_file %}<tr class="deleted {{ oddity }}">
     {% else %}{% if d.new_file %}<tr class="new {{ oddity }}">
     {% else %}{% if d.renamed %}<tr class="renamed {{ oddity }}">
     {% else %}<tr class="{{ oddity }}">
     {% endif %}{% endif %}{% endif %}
-    <td><a href="{% url djpro:view-blob commit %}?r={{ repo.path|name }}&b={{ d.b_path }}">{% if d.b_mode %}{{ d.b_mode }}{% endif %}</a></td>
-      <td><a href="{% url djpro:view-blob commit %}?r={{ repo.path|name }}&b={{ d.b_path }}">{{ d.b_path }}</a></td>
-      <td><a href="{% url djpro:view-diff commit %}?r={{ repo.path|name }}&b={{ d.b_path }}">{% trans "diff" %}</a></td>
-      <td><a href="{% url djpro:view-blob commit %}?r={{ repo.path|name }}&b={{ d.b_path }}">{% trans "view" %}</a></td>
-      <td><a href="{% url djpro:view-raw commit %}?r={{ repo.path|name }}&b={{ d.b_path }}">{% trans "download" %}</a></td>
-      <td>{% trans "history" %}</td>
-      {% if d.renamed %}
-      <td class="rename-details">{% trans "was" %} {{ d.a_path }}{% if d.a_mode %} ({{ d.a_mode }}){% endif %}</td>
-      {% else %}
-      <td></td>
-      {% endif %}
+    <td class="action"><a href="{% url djpro:view-diff commit %}?r={{ repo.path|name }}&b={{ d.b_path }}" title="{% trans 'view differences done at this file for this commit' %}">{% trans "diff" %}</a></td>
+    <td class="action">{% if not d.deleted_file %}<a href="{% url djpro:view-blob commit %}?r={{ repo.path|name }}&b={{ d.b_path }}" title="{% trans 'view this file after this commit' %}">{% trans "view" %}</a>{% else %}{% trans "view" %}{% endif %}</td>
+    <td class="action">{% if not d.deleted_file %}<a href="{% url djpro:view-raw commit %}?r={{ repo.path|name }}&b={{ d.b_path }}" title="{% trans 'download this file' %}">{% trans "download" %}</a>{% else %}{% trans "download" %}{% endif %}</td>
+    <td class="action"><a href="{% url djpro:view-commit commit %}?r={{ repo.path|name }}" title="{% trans 'view the whole commit and its changes' %}">{% trans "commit" %}</a></td>
+    <td class="mode">{% if d.a_mode %}{{ d.a_mode|mode }}{% else %}{% if d.b_mode %}{{ d.b_mode|mode }}{% else %}-----------{% endif %}{% endif %}</td>
+    <td class="path">{{ d.b_path }}</td>
+    <td class="date">{{ commit.committed_date|tuple_to_date|date:"d/F/Y" }}</td>
+    <td class="author">{{ commit.committer.name }}</td>
+    <td class="summary">{{ commit.summary }}</td>
+    <td class="information">
+    {% if d.renamed %}
+    {% trans "was" %} {{ d.a_path }}{% if d.a_mode %} ({{ d.a_mode|mode }}){% endif %}
+    {% else %}{% if d.new_file %}{% trans "created" %}
+    {% else %}{% if d.deleted_file %}{% trans "deleted" %}
+    {% endif %}{% endif %}{% endif %}
+    </td>
     </tr>
     {% endfor %}
     </table>
   </div>
-  {% else %}
-  <div class="changes">
-    <p>{% trans "No diff information." %}</p>
-  </div>
-  {% endif %}
 
 </div>
+{% endwith %}
 {% endblock %}

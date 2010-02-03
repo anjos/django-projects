@@ -41,26 +41,36 @@ def repo_detail(request, template_name='djpro/repo.html'):
 def repo_history(request, commit=None, template_name='djpro/repo_history.html'):
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 
   if not request.GET.has_key('b'): raise ObjectDoesNotExist
-  if not commit and c: commit == c[0].id
 
   p = request.GET['b']
   r = get_repo(request.GET['r'])
-  c = r.commits(max_count=r.commit_count())
 
-  found = False
-  keep = []
-  for k in c: # browse all commits see if the path is in any of them.
-    if not found and commit == k.id: found = True
-    else: continue
+  commits = r.log(path=p) 
 
-    for d in k.diffs:
-      if d.b_path and d.b_path.find(p) == 0: keep.append((k, d))
-      elif d.a_path and d.a_path.find(p) == 0: # maybe it was moved
-        p = d.a_path
-        keep.append((k, d))
+  if commit: #if I need to start from a specific commit and go backwards...
+    index = 0
+    for k in commits:
+      if commit == k.id: break
+      ++index
+    commits = commits[index:]
+
+  diffs = []
+  for k in commits:
+    diffs.extend([d for d in k.diffs if d.b_path and d.b_path.find(p) == 0])
+
+  while diffs[-1].renamed and diffs[-1].a_path: #track down renames
+    p = diffs[-1].a_path
+    commits_ext = r.log(path=p)
+    diffs_ext = []
+    for k in commits_ext:
+      diffs_ext.extend([d for d in k.diffs if d.b_path and d.b_path.find(p) == 0])
+    commits.extend(commits_ext)
+    diffs.extend(diffs_ext)
 
   return render_to_response(template_name, 
-      {'repo': r, 'commits': keep}, 
+      {'repo': r, 
+       'commits': zip(commits, diffs),
+       'path': p}, 
       context_instance=RequestContext(request))
 
 def repo_commit(request, commit, template_name='djpro/repo_commit.html'):
@@ -91,6 +101,29 @@ def repo_diff(request, commit, template_name='djpro/repo_diff.html'):
                             }, 
                             context_instance=RequestContext(request))
 
+def download_tree(request, commit=None):
+  if not request.GET.has_key('r'): raise ObjectDoesNotExist 
+  r = get_repo(request.GET['r'])
+  if commit: 
+    c = r.commit(commit)
+    root = r.commit(commit).tree
+  else: 
+    head = get_head(r, request.GET.get('h', None))
+    c = head.commit
+    root = r.tree()
+  p = request.GET.get('t', '').strip(' ' + os.sep)
+  t = get_tree(root, p)
+  if not t: raise ObjectDoesNotExist
+  t = t[-1][1] # we only need the last object of the returned chain
+  
+  data = r.archive_tar_gz(t.id)
+   
+  retval = HttpResponse(data, mimetype='application/x-tar-gz')
+  filename = t.name
+  if not filename: filename = os.path.basename(r.wd)
+  retval['Content-Disposition'] = 'attachment; filename=%s.tar.gz' % filename 
+  return retval
+
 def repo_tree(request, commit=None, template_name='djpro/repo_tree.html'):
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 
   r = get_repo(request.GET['r'])
@@ -100,14 +133,16 @@ def repo_tree(request, commit=None, template_name='djpro/repo_tree.html'):
   else: 
     head = get_head(r, request.GET.get('h', None))
     c = head.commit
-    root = r.tree() 
-  t = get_tree(root, request.GET.get('t', '').strip(' ' + os.sep))
+    root = r.tree()
+  p = request.GET.get('t', '').strip(' ' + os.sep)
+  t = get_tree(root, p)
   if not t: raise ObjectDoesNotExist
    
   return render_to_response(template_name, 
                             {
                              'repo': r, 
                              'tree': t, 
+                             'path': p,
                              'commit': c, 
                             }, 
                             context_instance=RequestContext(request))
@@ -134,13 +169,13 @@ def find_blob(repo, path, head=None, commit=None):
 
 def repo_raw(request, commit=None):
   (r, c, b) = find_blob(request.GET.get('r', None), request.GET.get('b', None),
-            request.GET.get('h', None), request.GET.get('c', None))
+            request.GET.get('h', None), commit)
   return raw_blob(b[-1][1])
 
 def repo_blob(request, commit=None, template_name='djpro/repo_blob.html'):
   (r, c, b) = find_blob(request.GET.get('r', None), request.GET.get('b', None),
-            request.GET.get('h', None), request.GET.get('c', None))
-  if not blob_is_text(b[-1][1]): return raw_blob(b[-1][1]) 
+            request.GET.get('h', None), commit)
+  if not blob_is_text(b[-1][1]): return raw_blob(b[-1][1])
 
   return render_to_response(template_name, 
                             {

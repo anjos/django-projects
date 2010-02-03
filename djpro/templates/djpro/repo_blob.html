@@ -10,26 +10,33 @@
 {% pygments_css "default" %} 
 {% endblock %}
 
-{% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {% endblock %}
+{% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {{ p }}{% endblock %}
 
 {% block content %}
 <div class="repository">
+  <p class="section-title">{% trans "Repository navigation" %}</p>
   <div class="navigation">
-    <p><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "summary" %}</a> | <a href="{% url djpro:view-commit commit %}?r={{ repo.path|name }}">{% trans "commit" %}</a>{% if commit.parents %} | <a href="{% url djpro:view-diff commit.parents.0 %}?={{ repo.path|name }}">{% trans "previous" %}</a>{% endif %}</p>
+    <p><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "summary" %}</a> | <a href="{% url djpro:view-commit commit %}?r={{ repo.path|name }}">{% trans "commit" %}</a>{% if commit.parents %} | <a href="{% url djpro:view-commit commit.parents.0 %}?r={{ repo.path|name }}">{% trans "previous" %}</a>{% endif %}</p>
   </div>
 
-  <div class="summary">
-    <p>{{ commit.summary }}</p>
+  <div class="author">
     <p>{{ commit.author.name }} &lt;{{ commit.author.email }}&gt; {% trans "at" %} {{ commit.authored_date|tuple_to_date|date:"r" }}</p>
+  </div>
+  <div class="summary">
+    <p>{{ commit.message }}</p>
+  </div>
+
   </div>
 
   {% with blob|last as bl %}
   <div class="browser">
-    <p>{% for p in blob|slice:"1:-1" %} / <a href="{% url djpro:view-tree commit %}?r={{ repo.path }}{% if p.0 %}&t={{ p.0 }}{% endif %}">{{ p.0 }}</a>{% endfor %} / {{ bl.0 }}
+    <table>
+      <tr><th>path</th><td>{% for p in blob|slice:"1:-1" %} / <a href="{% url djpro:view-tree commit %}?r={{ repo.path }}{% if p.0 %}&t={{ p.0 }}{% endif %}">{{ p.0 }}</a>{% endfor %} / {{ bl.0 }}</td></tr>
+    <table>
   </div>
 
   <div class="blob">
-    {% highlight bl.1 %}
+    {% auto_highlight bl.1 %}
   </div>
   {% endwith %}
 

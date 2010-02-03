@@ -93,8 +93,8 @@ def get_tree(tree, path):
       retval.append((k, t))
       tree = t
     else:
-      break #no point in continuing, path does not exist!
-  return None
+      return None #no point in continuing, path does not exist!
+  return retval
 
 def relative_date(t):
 
