@@ -87,3 +87,50 @@ def merge_path(path, extension):
   if not path: return extension
   return os.path.join(path, extension)
 
+@register.filter("split")
+def split(value, sep):
+  return value.split(sep)
+
+@register.filter("special_pagination")
+def special_pagination(paginator):
+  around = 3 # number of pages around the current one to show
+  pages = range(paginator.number - around, paginator.number + around + 1) 
+  pages = [k for k in pages if k > 0 and k <= paginator.paginator.num_pages]
+  if pages[0] > 1: 
+    if pages[0] > 2: pages.insert(0, False)
+    pages.insert(0, 1)
+  if pages[-1] < paginator.paginator.num_pages:
+    if pages[-1] < (paginator.paginator.num_pages - 1): pages.append(False)
+    pages.append(paginator.paginator.num_pages)
+  return pages
+
+@register.inclusion_tag('djpro/repo_navigation.html')
+def navigation(repo, commit):
+  return {'repo': repo, 'commit': commit} 
+
+@register.inclusion_tag('djpro/commit_summary.html')
+def summary(repo, commit):
+  return {'repo': repo, 'commit': commit} 
+
+@register.inclusion_tag('djpro/commit_statistics.html')
+def statistics(commit):
+  return {'commit': commit} 
+
+@register.inclusion_tag('djpro/paginator.html')
+def paginator(repo, head, paginator):
+  return {'repo': repo, 'head': head, 'paginator': paginator}
+
+@register.filter("taglist")
+def taglist(commit, tags):
+  return [t for t in tags if t.commit.id == commit.id]
+
+@register.filter("reverse")
+def reverse(value):
+  value = list(value)
+  value.reverse()
+  return value
+
+@register.filter("getpath")
+def getpath(l, i): 
+  return [k[0] for k in l[:i]]
+

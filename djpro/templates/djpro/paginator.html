@@ -1,0 +1,8 @@
+{% load i18n repositories %}<div class="pagination">
+  <ul>
+    <li class="header">pages</li>
+    {% for k in paginator|special_pagination %}
+    {% if k %}<li class="page{% ifequal k paginator.number %} current{% endifequal %}"><a href="?r={{ repo.path|name }}&h={{ head }}&page={{ k }}" title="{% blocktrans with k as page %}go to page {{ page }}{% endblocktrans %}">{{ k }}</a></li>{% else %}<li class="dots">...</li>{% endif %}
+  {% endfor %}
+  <ul>
+</div>

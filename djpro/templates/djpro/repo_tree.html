@@ -12,28 +12,23 @@
 
 {% block content %}
 <div class="repository">
-  <div class="navigation">
-  <p class="section-title">{% trans "Repository navigation" %}</p>
-    <p><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "summary" %}</a> | <a href="{% url djpro:view-commit commit %}?r={{ repo.path|name }}">{% trans "commit" %}</a>{% if commit.parents %} | <a href="{% url djpro:view-commit commit.parents.0 %}?r={{ repo.path|name }}">{% trans "previous" %}</a>{% endif %}</p>
-  </div>
+  {% navigation repo commit %}
+
+  {% summary repo commit %}
 
   {% with tree|last as tl %}
   <div class="browser">
-    <table>
-      <tr><th>path</th><td>{% for p in tree|slice:"1:-1" %} / <a href="{% url djpro:view-tree commit %}?r={{ repo.path }}{% if p.0 %}&t={{ p.0 }}{% endif %}">{{ p.0 }}</a>{% endfor %} / {{ tl.0 }}</td></tr>
-    <table>
+    <p class="section-title">{% trans "Browser" %}</p>
+    <p class="path"><a href="{% url djpro:view-tree commit %}?r={{ repo.path|name }}">[root]</a>{% for p in tree|slice:"1:-1" %} / <a href="{% url djpro:view-tree commit %}?r={{ repo.path|name }}{% if p.0 %}&t={{ tree|slice:"1:-1"|getpath:forloop.counter|join:'/' }}{% endif %}">{{ p.0 }}</a>{% endfor %} / {{ tl.0 }}</p>
   </div>
 
-  <div class="tree">
+  <div class="tree contrast">
   <p class="section-title">{% trans "Tree view" %}</p>
     <table>
       <tr><th colspan="4">{% trans "actions" %}</th>
         <th>{% trans "mode" %}</th>
+        <th>{% trans "size" %}</th>
         <th>{% trans "path" %}</th>
-        <th>{% trans "date" %}</th>
-        <th>{% trans "author" %}</th>
-        <th>{% trans "summary" %}</th>
-        <th>{% trans "information" %}</th>
       </tr>
     {% for name,obj in tl.1.items %}
     <!-- {% cycle 'even' 'odd' as oddity %} -->
@@ -46,6 +41,7 @@
     <td class="action"><a href="{% url djpro:download-tree commit %}?r={{ repo.path|name }}&t={% merge_path path name %}" title="{% trans 'download this tree' %}">{% trans "download" %}</a></td>
     <td class="action"></td>
     <td class="mode">{{ obj.mode|mode }}</td>
+    <td class="size">{{ obj|length }}</td>
     <td class="path">{{ name }}</td>
 
     </tr>
@@ -58,6 +54,7 @@
     <td class="action"><a href="{% url djpro:view-raw commit %}?r={{ repo.path|name }}&b={% merge_path path name %}" title="{% trans 'download this file' %}">{% trans "download" %}</a></td>
     <td class="action"><a href="{% url djpro:view-history commit %}?r={{ repo.path|name }}&b={% merge_path path name %}" title="{% trans 'access the commit history for this file only' %}">{% trans "history" %}</a></td>
     <td class="mode">{{ obj.mode|mode }}</td>
+    <td class="size">{{ obj.size }}</td>
     <td class="path">{{ name }}</td>
 
     </tr>

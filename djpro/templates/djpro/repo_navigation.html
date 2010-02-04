@@ -1,0 +1,4 @@
+{% load i18n repositories %}<div class="navigation">
+<p class="section-title">{% trans "Repository navigation" %}</p>
+  <p><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "summary" %}</a> | <a href="{% url djpro:view-commit commit %}?r={{ repo.path|name }}">{% trans "commit" %}</a>{% if commit.parents %} | <a href="{% url djpro:view-commit commit.parents.0 %}?r={{ repo.path|name }}">{% trans "parent" %}</a>{% endif %}</p>
+</div>

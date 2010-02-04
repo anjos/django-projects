@@ -8,19 +8,20 @@
 <link href="{{ MEDIA_URL }}djpro/css/repo.css" rel="stylesheet" type="text/css" media="screen" />
 {% endblock %}
 
-{% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {% trans "History of" %} {{ path }}{% endblock %}
+{% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {% trans "History of" %} {{ path|last }}{% endblock %}
 
 {% block content %}
 <div class="repository">
   {% with commits.0.0 as latest %}
-  <div class="navigation">
-    <p class="section-title">{% trans "Repository navigation" %}</p>
-    <p><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "summary" %}</a> | <a href="{% url djpro:view-diff latest %}?r={{ repo.path|name }}">{% trans "diff" %}</a>{% if latest.parents %} | <a href="{% url djpro:view-commit latest.parents.0 %}?r={{ repo.path|name }}">{% trans "previous" %}</a>{% endif %}</a></p>
+
+  {% navigation repo latest %}
+
+  <div class="browser">
+    <p class="section-title">{% trans "Browser" %}</p>
+    <p class="path"><a href="{% url djpro:view-tree latest %}?r={{ repo.path|name }}">[root]</a>{% for p in  path|slice:":-1" %} / <a href="{% url djpro:view-tree latest %}?r={{ repo.path|name }}{% if p %}&t={{ p }}{% endif %}">{{ p|split:"/"|last }}</a>{% endfor %} / {{ path|last|split:"/"|last }}</p>
   </div>
 
-  <div class="path"><p>/ {{ path }}</p></div>
-
-  <div class="changes">
+  <div class="changes constrast">
     <p class="section-title">{% trans "Changes" %}</p>
     <table>
       <tr><th colspan="4">{% trans "actions" %}</th>
@@ -44,7 +45,7 @@
     <td class="action"><a href="{% url djpro:view-commit commit %}?r={{ repo.path|name }}" title="{% trans 'view the whole commit and its changes' %}">{% trans "commit" %}</a></td>
     <td class="mode">{% if d.a_mode %}{{ d.a_mode|mode }}{% else %}{% if d.b_mode %}{{ d.b_mode|mode }}{% else %}-----------{% endif %}{% endif %}</td>
     <td class="path">{{ d.b_path }}</td>
-    <td class="date">{{ commit.committed_date|tuple_to_date|date:"d/F/Y" }}</td>
+    <td class="date">{{ commit.committed_date|relative_date }}</td>
     <td class="author">{{ commit.committer.name }}</td>
     <td class="summary">{{ commit.summary }}</td>
     <td class="information">

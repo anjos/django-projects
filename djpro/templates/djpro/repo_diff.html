@@ -37,6 +37,7 @@
   </div>
 
   <div class="diffs">
+  <p class="section-title">{% trans "Differences" %}</p>
   {% if diffs %}
   {% for d in diffs %}
   <p class="diff-command">diff --git a/{{ d.a_path }} b/{{ d.b_path }}</p>

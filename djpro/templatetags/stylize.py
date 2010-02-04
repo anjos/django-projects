@@ -5,9 +5,9 @@ from pygments.formatters import HtmlFormatter
 
 register = Library()
 
-# prints the CSS style of choice into the webpage, for pygments
 @register.simple_tag
 def pygments_css(style):
+  """Prints the CSS style of choice into the webpage, for pygments."""
   retval = u'<style type="text/css"><!--\n'
   retval += HtmlFormatter(style=style).get_style_defs('.highlight')
   retval += '\n--></style>'

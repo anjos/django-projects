@@ -12,6 +12,7 @@
 
 {% block content %}
   <div class="repository">
+    <div class="contrast">
     <table>
       <tr>
         <th>{% trans "Project" %}</th>
@@ -22,11 +23,12 @@
       {% for repo in repos %}
       <tr class="{% cycle 'even' 'odd' %}">
         <td><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{{ repo.path|name }}</a></td>
-        <td><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{{ repo.description }}</a></td>
+        <td class="summary">{{ repo.description }}</td>
         <td>{{ repo.commits.0.author.name }}</td>
         <td>{{ repo.commits.0.committed_date|relative_date }}</td>
       </tr>
       {% endfor %}
     </table>
+    </div>
   </div>
 {% endblock %}

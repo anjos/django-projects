@@ -11,6 +11,7 @@ from django.shortcuts import render_to_response, get_object_or_404, get_list_or_
 from django.core.exceptions import ObjectDoesNotExist
 from djpro.models import Project, Download
 from django.template import RequestContext
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from utils import *
 from conf import settings
@@ -32,17 +33,32 @@ def repo_list(request, template_name='djpro/repo_list.html'):
 def repo_detail(request, template_name='djpro/repo.html'):
   if not request.GET.has_key('r'): return repo_list(request) 
   r = get_repo(request.GET['r'])
-  c = r.commits(max_count=r.commit_count()) 
+  head = request.GET.get('h', r.heads[0].name) # get default head
+  c = r.commits(start=head, max_count=r.commit_count())
+  paginator = Paginator(c, settings.DJPRO_COMMITS_PER_PAGE)
 
+  try:
+    page = int(request.GET.get('page', '1'))
+  except ValueError:
+    page = 1
+
+  try:
+    commits = paginator.page(page)
+  except (EmptyPage, InvalidPage):
+    commits = paginator.page(paginator.num_pages)
+  
   return render_to_response(template_name, 
-      {'repo': r, 'commits': c}, 
+      {'repo': r, 
+        'commits': commits, 
+        'head': head,
+        'max_tags': settings.DJPRO_MAX_TAGS}, 
       context_instance=RequestContext(request))
 
 def repo_history(request, commit=None, template_name='djpro/repo_history.html'):
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 
   if not request.GET.has_key('b'): raise ObjectDoesNotExist
 
-  p = request.GET['b']
+  p = request.GET['b'].strip(' ' + os.sep)
   r = get_repo(request.GET['r'])
 
   commits = r.log(path=p) 
@@ -67,10 +83,17 @@ def repo_history(request, commit=None, template_name='djpro/repo_history.html'):
     commits.extend(commits_ext)
     diffs.extend(diffs_ext)
 
+  # this little magic will generate a list that looks like this:
+  # ['a', 'a/b', 'a/b/c', 'a/b/c/d' 'a/b/c/d/file.txt']
+  path = p.split(os.sep)
+  path = [os.sep.join(path[:(len(path)-k)]) for k in range(len(path))]
+  path.reverse()
+
   return render_to_response(template_name, 
       {'repo': r, 
        'commits': zip(commits, diffs),
-       'path': p}, 
+       'path': path,
+       }, 
       context_instance=RequestContext(request))
 
 def repo_commit(request, commit, template_name='djpro/repo_commit.html'):

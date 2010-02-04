@@ -36,6 +36,7 @@ setup(
       'PIL>=1.1.6',
       'Pygments>=1.2',
       'dateutils',
+      'textile',
       ],
 
     dependency_links = [
