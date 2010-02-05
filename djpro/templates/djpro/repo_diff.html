@@ -1,52 +1,15 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% load repositories %}
-{% load stylize %}
+{% load repositories embed %}
 
 {% block media %}
 {{ block.super }}
-<link href="{{ MEDIA_URL }}djpro/css/repo.css" rel="stylesheet" type="text/css" media="screen" />
-{% pygments_css "default" %} 
+{% repo_media %}
 {% endblock %}
 
 {% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {% trans "Differences" %} {{ commit|first_eight }}{% endblock %}
 
 {% block content %}
-<div class="repository">
-  <div class="navigation">
-    <p class="section-title">{% trans "Repository navigation" %}</p>
-    <p><a href="{% url djpro:view-repo %}?r={{ repo.path }}">{% trans "summary" %}</a> | <a href="{% url djpro:view-commit commit %}?r={{ repo.path }}">{% trans "commit" %}</a>{% if commit.parents %} | <a href="{% url djpro:view-diff commit.parents.0 %}?r={{ repo.path }}">{% trans "previous" %}</a>{% endif %}</p>
-  </div>
-
-  <div class="summary">
-    <p class="section-title">{% trans "Summary" %}</p>
-    <p>{{ commit.summary }}</p>
-    <table>
-      <tr><th>{% trans "author" %}</th><td>{{ commit.author.name }} &lt;{{ commit.author.email }}&gt; {% trans "at" %} {{ commit.authored_date|tuple_to_date|date:"r" }}</td></tr>
-      <tr><th>{% trans "committer" %}</th><td>{{ commit.committer.name }} &lt;{{ commit.committer.email }}&gt; {% trans "at" %} {{ commit.committed_date|tuple_to_date|date:"r" }}</td></tr>
-      <tr><th>{% trans "commit" %}</th><td>{{ commit.id }}</td></tr>
-      <tr><th>{% trans "tree" %}</th><td>{{ commit.tree.id }}</td></tr>
-      <tr><th>{% trans "parent" %}</th><td>{{ commit.parents.0.id }}</td></tr>
-    </table>
-  </div>
-
-  <div class="description">
-    <p class="section-title">{% trans "Log" %}</p>
-    <p>{{ commit.message }}</p>
-  </div>
-
-  <div class="diffs">
-  <p class="section-title">{% trans "Differences" %}</p>
-  {% if diffs %}
-  {% for d in diffs %}
-  <p class="diff-command">diff --git a/{{ d.a_path }} b/{{ d.b_path }}</p>
-  {% highlight "diff" d.diff %}
-  {% endfor %}
-  {% else %}
-  <p>{% trans "No diff information." %}</p>
-  {% endif %}
-  </div>
-
-</div>
+{% repo_diff %}
 {% endblock %}

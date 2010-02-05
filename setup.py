@@ -19,6 +19,7 @@ setup(
       'djpro': [
         'templates/djpro/*.html',
         'templates/djpro/feeds/*.html',
+        'templates/djpro/embed/*.html',
         'media/css/*.css',
         'media/img/*',
         'locale/*/LC_MESSAGES/django.po',

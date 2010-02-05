@@ -2,6 +2,8 @@
 {% load i18n %}
 {% load markup %}
 
+{% load embed %}
+
 {% block media %}
   {{ block.super }}
   <link href="{{ MEDIA_URL }}djpro/css/style.css" rel="stylesheet" type="text/css" media="screen" />
@@ -40,10 +42,6 @@
     {% endif %}
     <p class="details">{% trans "Information" %}</p>
     <table>
-      <tr><td>{% trans "Creation Date" %}: {{ object.date|date:"j/F/Y" }}
-      </td></tr>
-      <tr><td>{% trans "Last updated" %}: {{ object.updated_on|date:"j/F/Y" }}
-      </td></tr>
       {% if object.wiki_page %}
       <tr><td>{% trans "Wiki" %}: <a href="{{ object.wiki_page }}">{{ object.wiki_page }}</a></td></tr>
       {% endif %}
@@ -52,18 +50,7 @@
       {% endif %}
     </table>
     {% if object.git_repo %}
-    {% with object.git_repo as repo %}
-    <p class="details">{% trans "Repository" %}</p>
-    <ul>
-      {% if object.clone_url %}
-      <li>{% trans "Git clone URL" %}: <a href="{{ object.clone_url }}">{{ object.clone_url }}</a></li>
-      {% endif %}
-      <li>{% trans "Number of commits" %}: {{ repo.commit_count }}</li>
-      {% if repo.tags %}<li>{% trans "Last tag" %}: <span class="tag">{{ repo.tags.0.name }}</span> {% trans "on" %} {{ object.git_last_tag_date|date:"l, H:i j/M/Y" }}</li>{% endif %}
-      <li>{% trans "Last commit" %}: {{ object.git_last_commit_date|date:"l, H:i j/M/Y" }}, <span class="summary">{{ repo.log.0.summary }}</span></li>
-      <li>{% trans "First commit" %}: {{ object.git_first_commit_date|date:"j/M/Y" }}</li>
-    </ul>
-    {% endwith %}
+    {% repo %}
     {% endif %}
   </div>
   <div class="actions">

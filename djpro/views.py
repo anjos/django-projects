@@ -15,6 +15,34 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from utils import *
 from conf import settings
+from models import *
+
+def project_detail(request, slug, **kwargs):
+
+  object = Project.objects.get(slug=slug)
+  r = get_repo(object.git_dir)
+  head = request.GET.get('h', r.heads[0].name) # get default head
+  c = r.commits(start=head, max_count=r.commit_count())
+  paginator = Paginator(c, settings.DJPRO_COMMITS_PER_PAGE)
+
+  try:
+    page = int(request.GET.get('page', '1'))
+  except ValueError:
+    page = 1
+
+  try:
+    commits = paginator.page(page)
+  except (EmptyPage, InvalidPage):
+    commits = paginator.page(paginator.num_pages)
+  
+  return render_to_response(kwargs['template_name'], 
+      {'object': object,
+       'feeds': kwargs['feeds'],
+       'repo': r, 
+       'commits': commits, 
+       'head': head,
+       'max_tags': settings.DJPRO_MAX_TAGS}, 
+      context_instance=RequestContext(request))
 
 def projects_dsa_pubkey(request, slug):
   """View the DSA public key of project as a downloadable file"""
@@ -49,9 +77,9 @@ def repo_detail(request, template_name='djpro/repo.html'):
   
   return render_to_response(template_name, 
       {'repo': r, 
-        'commits': commits, 
-        'head': head,
-        'max_tags': settings.DJPRO_MAX_TAGS}, 
+       'commits': commits, 
+       'head': head,
+       'max_tags': settings.DJPRO_MAX_TAGS}, 
       context_instance=RequestContext(request))
 
 def repo_history(request, commit=None, template_name='djpro/repo_history.html'):

@@ -14,8 +14,6 @@ class Project(models.Model):
 
   slug = models.SlugField(_('Slug'), max_length=32, primary_key=True, help_text=_('Insert a short, meaningful unique slug for your project. Only letters, digits and underscores.'))
 
-  date = models.DateField(_('Start date'), help_text=_('The start date of this project.'))
-
   updated = models.DateField(_('Last update'), auto_now_add=True, help_text=_('The date on the last update of this project description.'))
 
   brief = models.CharField(_('Brief description'), max_length=1024, help_text=_('Brief description of this project (max %d characters)' % 1024))
@@ -55,27 +53,6 @@ class Project(models.Model):
     else:
       return self.updated
   updated_on.short_description = _('Last updated')
-
-  def git_repo(self):
-    if not self.git_dir: return None
-    path = os.path.join(settings.DJPRO_GIT_BASE_DIRECTORY, self.git_dir)
-    if os.path.exists(path): return git.Repo(path)
-    return None
-
-  def git_last_tag_date(self):
-    r = self.git_repo()
-    if not r or not r.log(): return
-    return datetime.datetime(*(r.tags[-1].commit.committed_date[0:7]))
-
-  def git_first_commit_date(self):
-    r = self.git_repo()
-    if not r or not r.log(): return
-    return datetime.datetime(*(r.log()[-1].committed_date[0:7]))
-
-  def git_last_commit_date(self):
-    r = self.git_repo()
-    if not r or not r.log(): return
-    return datetime.datetime(*(r.log()[0].committed_date[0:7]))
 
   # make it translatable
   class Meta:

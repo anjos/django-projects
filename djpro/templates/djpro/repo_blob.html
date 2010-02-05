@@ -1,34 +1,15 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% load repositories %}
-{% load stylize %}
+{% load repositories embed %}
 
 {% block media %}
 {{ block.super }}
-<link href="{{ MEDIA_URL }}djpro/css/repo.css" rel="stylesheet" type="text/css" media="screen" />
-{% pygments_css "default" %} 
+{% repo_media %}
 {% endblock %}
 
 {% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {{ p }}{% endblock %}
 
 {% block content %}
-<div class="repository">
-  
-  {% navigation repo commit %}
-
-  {% summary repo commit %}
-
-  {% with blob|last as bl %}
-  <div class="browser">
-    <p class="section-title">{% trans "Browser" %}</p>
-    <p class="path"><a href="{% url djpro:view-tree commit %}?r={{ repo.path|name }}">[root]</a>{% for p in blob|slice:"1:-1" %} / <a href="{% url djpro:view-tree commit %}?r={{ repo.path|name }}{% if p.0 %}&t={{ blob|slice:"1:-1"|getpath:forloop.counter|join:'/' }}{% endif %}">{{ p.0 }}</a>{% endfor %} / {{ bl.0 }}<p>
-  </div>
-
-  <div class="blob">
-    {% auto_highlight bl.1 %}
-  </div>
-  {% endwith %}
-
-</div>
+{% repo_blob %}
 {% endblock %}

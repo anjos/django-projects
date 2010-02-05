@@ -16,11 +16,6 @@ project_list = { 'queryset': Project.objects.order_by('-date'),
                  'template_name': 'djpro/list.html',
                }
 
-project_detail = { 'queryset': Project.objects.filter(),
-                   'template_name': 'djpro/detail.html',
-                   'extra_context': {'feeds': feeds.values()},
-                 }
-
 download_detail = { 'queryset': Download.objects.filter(),
                     'template_name': 'djpro/download_detail.html',
                   }
@@ -56,9 +51,11 @@ urlpatterns = patterns('',
                        url(r'^repo/history/(?P<commit>[\w\d]+)/$', repo_history, name='view-history'),
                       
                        # entry key for projects
-                       url(r'^(?P<slug>\w+)/$', 
-                           list_detail.object_detail,
-                           project_detail, name='detail'),
+                       url(r'^(?P<slug>\w+)/$', project_detail, 
+                           {'feeds': feeds.values(),
+                            'template_name': 'djpro/detail.html',
+                           }, 
+                           name='view-project'), 
 
                        )
 
