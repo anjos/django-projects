@@ -50,6 +50,14 @@ function install () {
   echo "### Installation of $package is done!"
 }
 
-install djpro ${djpro}
+function link_install () {
+  echo "### Link installing $1..."
+  location=`readline -f $2`;
+  cd ${INSTALLDIR};
+  rm -rf $1*;
+  ln -s $location .;
+  cd -;
+}
+
+link_install djpro ${djpro}
 install rosetta ${rosetta}
-install textile ${textile}
