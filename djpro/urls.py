@@ -12,7 +12,7 @@ feeds[LatestDeveloperDownloadsForProject.basename] = \
 all_feeds = dict(feeds)
 all_feeds[SparkleUpdatesForProject.basename] = SparkleUpdatesForProject
 
-project_list = { 'queryset': Project.objects.order_by('-date'),
+project_list = { 'queryset': Project.objects.all(),
                  'template_name': 'djpro/list.html',
                }
 

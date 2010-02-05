@@ -91,7 +91,7 @@
   font-size: 0.9em;
   background-color: #ccc;
   -moz-border-radius: 0.3em;
-  -khtml-border-radius: 0.3em;
+  -webkit-border-radius: 0.3em;
   border-radius: 0.3em;
   border: solid 1px #444;
   padding: 0.3em;
@@ -128,7 +128,163 @@
 }
 
 .repository .pagination ul li:hover {
-  background-color: #afa;
+  background-color: #f88;
+}
+
+/* handling of bubble tables */
+.repository table.twocolumn {
+  /* use this to center the table */
+  /* margin-left: auto;
+  margin-right: auto; */
+  margin: 1em;
+  border-spacing: 0px;
+}
+
+.repository table.twocolumn tr {
+  vertical-align: top;
+}
+
+.repository table.twocolumn td.column {
+  padding: 0px;
+  vertical-align: top;
+}
+
+.repository table.twocolumn td.column:first-child {
+  padding-right: 5em;
+}
+
+.repository .bubble table {
+  border-spacing: 0px;
+}
+
+.repository .bubble .summary table tr {
+  background-color: #eef;
+}
+
+.repository .bubble .tags table tr {
+  background-color: #efe;
+}
+
+.repository .bubble .shortlog table.shortlog-top {
+  margin: 1em;
+}
+
+.repository .bubble .shortlog table tr {
+  background-color: #eee;
+}
+
+.repository .bubble .summary tr.title {
+  background-color: #008;
+}
+
+.repository .bubble .tags tr.title {
+  background-color: #050;
+}
+
+.repository .bubble .shortlog tr.title {
+  background-color: #555;
+}
+
+.repository .bubble table tr:first-child td:first-child {
+  -moz-border-radius-topleft: 0.8em;
+  -webkit-border-top-left-radius: 0.8em;
+  border-top-left-radius: 0.8em;
+}
+
+.repository .bubble table tr:first-child td:last-child {
+  -moz-border-radius-topright: 0.8em;
+  -webkit-border-top-right-radius: 0.8em;
+  border-top-right-radius: 0.8em;
+}
+
+.repository .bubble table tr:last-child td:first-child {
+  -moz-border-radius-bottomleft: 0.8em;
+  -webkit-border-bottom-left-radius: 0.8em;
+  border-bottom-left-radius: 0.8em;
+}
+
+.repository .bubble table tr:last-child td:last-child {
+  -moz-border-radius-bottomright: 0.8em;
+  -webkit-border-bottom-right-radius: 0.8em;
+  border-bottom-right-radius: 0.8em;
+}
+
+.repository .bubble tr.title {
+  color: white;
+  background-color: black;
+  font-family: arial, helvetica, sans;
+  font-weight: bold;
+  font-size: 1.1em;
+  font-align: left;
+}
+
+.repository .bubble tr.subtitle td {
+  color: black;
+  background-color: #ccc;
+  font-family: arial, helvetica, sans;
+  font-weight: bold;
+  font-size: 1.1em;
+  font-align: left;
+}
+
+.repository .bubble table.inner {
+  border: none;
+  width: 100%;
+  max-width: 100%;
+}
+
+.repository .bubble table.inner {
+  border-spacing: 2px;
+  padding: 0.2em;
+}
+
+.repository .bubble table.inner tr.even {
+  background-color: #cef;
+}
+
+.repository .bubble table.inner tr.odd {
+  background-color: #ccc;
+}
+
+.repository .bubble .tags table.inner tr:first-child {
+  background-color: green;
+  color: white;
+  opacity: 0.2;
+  filter:alpha(opacity=20);
+}
+
+.repository .bubble .shortlog table.inner tr:first-child {
+  background-color: #555;
+  color: white;
+}
+
+.repository .bubble .tags table.inner tr td, .repository .bubble .shortlog table.inner tr td {
+  -moz-border-radius-bottomright: 0em;
+  -webkit-border-bottom-right-radius: 0em;
+  border-bottom-right-radius: 0em;
+  -moz-border-radius-bottomleft: 0em;
+  -webkit-border-bottom-left-radius: 0em;
+  border-bottom-left-radius: 0em;
+}
+
+.repository .bubble table.inner tr:last-child td:first-child {
+  -moz-border-radius-bottomleft: 0.5em;
+  -webkit-border-bottom-left-radius: 0.5em;
+  border-bottom-left-radius: 0.5em;
+}
+
+.repository .bubble table.inner tr:last-child td:last-child {
+  -moz-border-radius-bottomright: 0.5em;
+  -webkit-border-bottom-right-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+}
+
+.repository .bubble .shortlog table.inner tr td {
+  font-size: 0.9em;
+}
+
+.repository .bubble .shortlog table.inner tr.commit td.summary {
+  width: 40%;
 }
 
 /* niceties for tags */
@@ -141,7 +297,7 @@
   font-size: 0.9em;
   padding: 0.1em;
   -moz-border-radius: 0.3em;
-  -khtml-border-radius: 0.3em;
+  -webkit-border-radius: 0.3em;
   border-radius: 0.3em;
   border-style: groove;
   border-width: 2px;
@@ -149,7 +305,7 @@
 
 /* niceties for heads */
 .repository .heads ul {
-  text-indent: -1em;
+  text-indent: -2em;
 }
 
 .repository .heads ul li {
@@ -163,7 +319,6 @@
   font-size: 0.9em;
   padding: 0.1em;
   -moz-border-radius: 0.3em;
-  -khtml-border-radius: 0.3em;
   border-radius: 0.3em;
   border-style: groove;
   border-width: 2px;

@@ -36,3 +36,20 @@ register.inclusion_tag('djpro/embed/repo_list.html', takes_context=True)(repo_li
 
 def repo_tree(context): return context
 register.inclusion_tag('djpro/embed/repo_tree.html', takes_context=True)(repo_tree)
+
+@register.inclusion_tag('djpro/embed/summary_bubble.html')
+def summary_bubble(repo):
+  return {'repo': repo}
+
+@register.inclusion_tag('djpro/embed/tag_bubble.html')
+def tag_bubble(repo):
+  return {'repo': repo}
+
+@register.inclusion_tag('djpro/embed/shortlog.html')
+def shortlog(repo, head, commits):
+  return {'repo': repo, 'head': head, 'commits': commits}
+
+@register.inclusion_tag('djpro/embed/repo_summary.html')
+def repo_summary(repo):
+  return {'repo': repo}
+

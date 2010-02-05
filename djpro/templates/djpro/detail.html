@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load markup %}
 
-{% load embed %}
+{% load repositories embed %}
 
 {% block media %}
   {{ block.super }}
@@ -11,11 +11,21 @@
   {% for feed in feeds %}
   <link rel="alternate" type="application/atom+xml" title="{{ feed.title }}" href="/project/feeds/{{ feed.basename }}/{{ object.slug }}"/>
   {% endfor %}
+  {% repo_media %}
 {% endblock %}
+
 {% block title %}{% trans "Project" %} :: {{ object }}{% endblock %}
 
 {% block content %}
   <div class="project">
+
+    <!-- a few quick links to the project's features -->
+    <ul class="quicklinks">
+      {% if object.wiki_page %}<li class="wiki"><a href="{{ object.wiki_page }}">{% trans "wiki" %}</a></li>{% endif %}
+      {% if object.dsa_key %}<li class="dsa-key"><a href="{% url djpro:dsakey object.slug %}">{% trans "dsa key" %}</a></li>{% endif %}
+      {% if object.git_dir %}<li class="git"><a href="{% url djpro:view-repo %}?r={{ object.git_dir }}">{% trans "repository" %}</a></li>{% endif %}
+    </ul>
+
     {% if object.public_downloads %}
     <div class="downloads">
       <!-- <p class="downloads_header">
@@ -31,6 +41,7 @@
       {% endfor %}
     </div>
     {% endif %}
+
     <p class="title">{{ object.name }}</p>
     <p class="preamble">{{ object.description|textile }}</p>
     {% if object.screenshot_set.count %}
@@ -40,18 +51,12 @@
       <p class="screenshot_caption">{{ f.description }}</p>
       {% endfor %}
     {% endif %}
-    <p class="details">{% trans "Information" %}</p>
-    <table>
-      {% if object.wiki_page %}
-      <tr><td>{% trans "Wiki" %}: <a href="{{ object.wiki_page }}">{{ object.wiki_page }}</a></td></tr>
-      {% endif %}
-      {% if object.dsa_pubkey %}
-      <tr><td>{% trans "Public DSA key" %}: <a href="{% url djpro:dsakey object.slug %}">DSA key</a></td></tr>
-      {% endif %}
-    </table>
-    {% if object.git_repo %}
+
+    <p class="details">{% trans "Repository" %}</p>
+    {% if object.git_dir %}
     {% repo %}
     {% endif %}
+
   </div>
   <div class="actions">
     [ <a href="/admin/djpro/project/{{ object.slug }}/">{% trans "edit" %}</a> | <a href="/admin/djpro/download/add/">{% trans "upload" %}</a> ]

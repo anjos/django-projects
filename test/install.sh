@@ -51,10 +51,11 @@ function install () {
 }
 
 function link_install () {
+  install $1 $2;
   echo "### Link installing $1..."
-  location=`readline -f $2`;
-  cd ${INSTALLDIR};
-  rm -rf $1*;
+  location=`readlink -f $2/$1`;
+  cd ${INSTALLDIR}/djpro-*;
+  rm -rf $1;
   ln -s $location .;
   cd -;
 }

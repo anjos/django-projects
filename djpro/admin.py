@@ -20,8 +20,8 @@ class ProjectAdmin(admin.ModelAdmin):
   list_filter = ['updated', 'name']
   list_per_page = 10
   ordering = ['-updated']
-  search_fields = ['name', 'date', 'git_dir']
-  date_hierarchy = 'date'
+  search_fields = ['name', 'git_dir']
+  date_hierarchy = 'updated'
     
 admin.site.register(Project, ProjectAdmin)
 
