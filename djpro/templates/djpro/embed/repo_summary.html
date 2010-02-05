@@ -1,0 +1,14 @@
+{% load embed %}
+{% comment %}requires "repo"{% endcomment %}
+<div class="repository">
+  <table class="twocolumn">
+    <tr>
+      <td class="column">
+        {% summary_bubble repo %}
+      </td>
+      <td class="column">
+        {% tag_bubble repo %}
+      </td>
+    </tr>
+  </table>
+</div>

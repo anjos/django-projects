@@ -1,0 +1,29 @@
+{% load i18n repositories %}
+{% comment %}requires "repo"{% endcomment %}
+<span class="bubble">
+  <span class="summary">
+    <table>
+      <tr class="title"><td>{% trans "Summary" %}</td></tr>
+      <tr class="summary">
+        <td>
+          <table class="inner">
+            <tr><th>{% trans "project" %}</th><td class="project-name">{{ repo.path|name }}</td></tr>
+            <tr><th>{% trans "description" %}</th><td class="summary">{{ repo.description }}</td></tr>
+            <tr><th>{% trans "last change" %}</th><td>{{ repo.commits.0.committed_date|tuple_to_date|date:"r" }}</td></tr>
+            <!--<tr><th>{% trans "url" %}</th><td></td></tr>-->
+          </table>
+        </td>
+      </tr>
+      <tr class="subtitle"><td>{% trans "Heads" %}</td></tr>
+      <tr class="heads">
+        <td>
+          <ul>
+              {% for head in repo.heads %}
+              <li><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}&h={{ head.name }}" title="{% trans 'switch to this head' %}">{{ head.name }}</a></li>
+              {% endfor %}
+          </ul>
+        </td>
+      </tr>
+    </table>
+  </span>
+</span>
