@@ -60,5 +60,5 @@ function link_install () {
   cd -;
 }
 
-link_install djpro ${djpro}
+install djpro ${djpro}
 install rosetta ${rosetta}
