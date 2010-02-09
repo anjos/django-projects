@@ -1,8 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% load markup %}
-
-{% load repositories embed %}
+{% load i18n markup embed %}
 
 {% block media %}
   {{ block.super }}
@@ -54,7 +51,21 @@
 
     <p class="details">{% trans "Repository" %}</p>
     {% if object.git_dir %}
-    {% repo %}
+    <div class="repository">
+      <table class="layout">
+        <tr class="top">
+          <td class="layout" colspan="2"></td>
+        </tr><!-- class="top" -->
+        <tr class="middle">
+          <td class="layout left">
+            {% summary_bubble repo %}
+          </td>
+          <td class="layout right">
+            {% tag_bubble repo %}
+          </td>
+        </tr>
+      </table><!-- class="layout" -->
+    </div><!-- class="repository" -->
     {% endif %}
 
   </div>

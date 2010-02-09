@@ -1,6 +1,12 @@
+div.project p.title {
+  margin-top: 1em;
+  font-size: 2.0em;
+  font-weight: bold;
+}
+
 div.project p.details {
   margin-top: 1em;
-  font-size: 2em;
+  font-size: 1.5em;
   font-weight: bold;
 }
 
@@ -79,5 +85,38 @@ div.project a.screenshot_link {
 div.project p.screenshot_caption {
   font-style: italic;
   font-size: 0.6em;
+}
+
+/* navigation links for each project, on the top of the detail page */
+ul.quicklinks {
+  text-align: right;
+  margin: 0em 0.1em 0em 0em;
+  height: 1.5em;
+}
+
+ul.quicklinks li {
+  display: inline;
+  list-style: none;
+  background-color: #484;
+  border-color: #484;
+  color: white;
+  font-family: arial, helvetica, sans;
+  font-weight: bold;
+  font-size: 0.9em;
+  padding: 0.1em;
+  border-style: outset;
+  border-width: 2px;
+}
+
+ul.quicklinks li:hover {
+  background-color: #262;
+  border-color: #262;
+  border-style: inset;
+}
+
+ul.quicklinks a {
+  text-decoration: none;
+  color: #fff;
+  padding: 0.3em;
 }
 
