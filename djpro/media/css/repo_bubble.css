@@ -20,7 +20,7 @@
 .bubble * table td {
 }
 
-.bubble table tr.title td {
+.bubble table tr.bubble_title td {
   background-color: #77a;
   color: white;
   font-family: arial, helvetica, sans;
@@ -28,7 +28,7 @@
   font-weight: bold;
 }
 
-.bubble table tr.subtitle td {
+.bubble table tr.bubble_subtitle td {
   background-color: #eee;
   font-family: arial, helvetica, sans;
   font-size: 1em;

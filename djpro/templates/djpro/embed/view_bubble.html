@@ -4,7 +4,7 @@
   <span class="view">
     {% with blob|last as bl %}
     <table>
-      <tr class="title"><td>{% trans "Browser" %}</td></tr>
+      <tr class="bubble_title"><td>{% trans "Browser" %}</td></tr>
       <tr class="path"><td><a href="{% url djpro:view-tree commit %}?r={{ repo.path|name }}">[root]</a>{% for p in blob|slice:"1:-1" %} / <a href="{% url djpro:view-tree commit %}?r={{ repo.path|name }}{% if p.0 %}&t={{ blob|slice:"1:-1"|getpath:forloop.counter|join:'/' }}{% endif %}">{{ p.0 }}</a>{% endfor %} / {{ bl.0 }}</td></tr>
       <tr>
         <td>

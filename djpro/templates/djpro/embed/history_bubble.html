@@ -3,7 +3,7 @@
 <span class="bubble">
   <span class="tree">
     <table>
-      <tr class="title"><td>{% trans "History" %}</td></tr>
+      <tr class="bubble_title"><td>{% trans "History" %}</td></tr>
       <tr class="path"><td><a href="{% url djpro:view-tree latest %}?r={{ repo.path|name }}">[root]</a>{% for p in  path|slice:":-1" %} / <a href="{% url djpro:view-tree latest %}?r={{ repo.path|name }}{% if p %}&t={{ p }}{% endif %}">{{ p|split:"/"|last }}</a>{% endfor %} / {{ path|last|split:"/"|last }}</td></tr>
       <tr><td> 
 

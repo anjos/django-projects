@@ -21,12 +21,6 @@
   background-color: #eee;
 }
 
-.repository p.section-title {
-  font-size: 1.2em;
-  font-weight: bold;
-  background-color: #eee;
-}
-
 .repository .lines-added {
   color: green;
 }
