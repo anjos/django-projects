@@ -1,0 +1,21 @@
+{% load i18n repositories %}
+{% comment %}requires "repo" and "commit"{% endcomment %}
+<span class="bubble">
+  <span class="summary">
+    <table>
+      <tr class="title"><td>{% trans "Summary" %}</td></tr>
+      <tr>
+        <td>
+          <table>
+          <tr><th>{% trans "project" %}</th><td class="project-name">{{ repo.path|name }}</td></tr>
+          <tr><th>{% trans "summary" %}</th><td class="short-summary">{{ commit.summary }}</td></tr>
+          <tr><th>{% trans "author" %}</th><td>{{ commit.author.name }} &lt;{{ commit.author.email }}&gt; {% trans "at" %} {{ commit.authored_date|tuple_to_date|date:"r" }}</td></tr>
+          <tr><th>{% trans "committer" %}</th><td>{{ commit.committer.name }} &lt;{{ commit.committer.email }}&gt; {% trans "at" %} {{ commit.committed_date|tuple_to_date|date:"r" }}</td></tr>
+          <tr><th>{% trans "commit" %}</th><td>{{ commit.id }}</td></tr>
+          <tr><th>{% trans "tree" %}</th><td><a href="{% url djpro:view-tree commit %}?r={{ repo.path|name }}">{{ commit.tree.id }}</a></td></tr>
+          <tr><th>{% trans "parent" %}</th><td>{% if commit.parents %}<a href="{% url djpro:view-commit commit.parents.0 %}?r={{ repo.path|name }}">{{ commit.parents.0.id }}</a>{% else %}{% trans "first commit" %}{% endif %}</td></tr>
+        </table>
+      </td>
+    </table>
+  </span>
+</span>

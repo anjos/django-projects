@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
-
-{% load repositories embed %}
+{% load i18n repositories embed %}
 
 {% block media %}
 {{ block.super }}
@@ -11,5 +9,29 @@
 {% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {% trans "Commit" %} {{ commit|first_eight }}{% endblock %}
 
 {% block content %}
-{% repo_commit %}
+<div class="repository">
+  <table class="layout">
+    <tr class="top">
+      <td class="layout" colspan="2">{% navigation repo commit %}</td>
+    </tr><!-- class="top" -->
+    <tr class="middle">
+      <td class="layout left">
+        {% commit_summary_bubble repo commit %}
+      </td>
+      <td class="layout right">
+        {% statistics_bubble commit %}
+      </td>
+    </tr>
+    <tr class="bottom">
+      <td class="layout bottom" colspan="2">
+        {% if commit.diffs %}
+        {% changes_bubble repo commit %}
+        {% else %}
+          {% trans "No diff information." %}
+        {% endif %}
+      </td>
+    </tr>
+  </table><!-- class="layout" -->
+</div><!-- class="repository" -->
 {% endblock %}
+

@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
-
-{% load repositories embed %}
+{% load i18n repositories embed %}
 
 {% block media %}
   {{ block.super }}
@@ -11,5 +9,24 @@
 {% block title %}{% trans "Repository" %} {{ repo.path|name }}{% endblock %}
 
 {% block content %}
-{% repo %}
+<div class="repository">
+  <table class="layout">
+    <tr class="top">
+      <td class="layout" colspan="2"></td>
+    </tr><!-- class="top" -->
+    <tr class="middle">
+      <td class="layout left">
+        {% summary_bubble repo %}
+      </td>
+      <td class="layout right">
+        {% tag_bubble repo %}
+      </td>
+    </tr>
+    <tr class="bottom">
+      <td class="layout bottom" colspan="2">
+        {% shortlog repo head commits %}
+      </td>
+    </tr>
+  </table><!-- class="layout" -->
+</div><!-- class="repository" -->
 {% endblock %}

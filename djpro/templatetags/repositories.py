@@ -104,10 +104,6 @@ def special_pagination(paginator):
     pages.append(paginator.paginator.num_pages)
   return pages
 
-@register.inclusion_tag('djpro/repo_navigation.html')
-def navigation(repo, commit):
-  return {'repo': repo, 'commit': commit} 
-
 @register.inclusion_tag('djpro/commit_summary.html')
 def summary(repo, commit):
   return {'repo': repo, 'commit': commit} 

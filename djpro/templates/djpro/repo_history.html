@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
-
-{% load repositories embed %}
+{% load i18n repositories embed %}
 
 {% block media %}
 {{ block.super }}
@@ -11,5 +9,20 @@
 {% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {% trans "History of" %} {{ path|last }}{% endblock %}
 
 {% block content %}
-{% repo_history %}
+{% with commits.0.0 as latest %}
+
+<div class="repository">
+  <table class="layout">
+    <tr class="top">
+      <td class="layout" colspan="2">{% navigation repo latest %}</td>
+    </tr><!-- class="top" -->
+    <tr class="bottom">
+      <td class="layout bottom" colspan="2">
+        {% history_bubble repo path latest commits %}
+      </td>
+    </tr>
+  </table><!-- class="layout" -->
+</div><!-- class="repository" -->
+
+{% endwith %}
 {% endblock %}

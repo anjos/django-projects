@@ -1,0 +1,16 @@
+/* This file defines the main style of the page layout for repositories 
+ * views */
+
+.repository table.layout {
+  margin-left: auto;
+  margin-right: auto;
+  border-spacing: 0.5em;
+}
+
+.repository table.layout tr td.layout
+{
+  /* border: 1px solid red; */
+  padding: 0px;
+  vertical-align: top;
+}
+

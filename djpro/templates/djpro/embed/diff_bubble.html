@@ -1,0 +1,17 @@
+{% load i18n stylize repositories embed %}
+{% comment %}requires "diffs"{% endcomment %}
+<span class="bubble">
+  <span class="diffs">
+    <table>
+      <tr class="title"><td>{% trans "Differences" %}</td></tr>
+      {% if diffs %}
+      {% for d in diffs %}
+      <tr class="command"><td>diff --git a/{{ d.a_path }} b/{{ d.b_path }}</td></tr>
+      <tr><td>{% highlight "diff" d.diff %}</td></tr>
+      {% endfor %}
+      {% else %}
+      <tr><td>{% trans "No diff information." %}</td></tr>
+      {% endif %}
+    </table>
+  </span>
+</span>
