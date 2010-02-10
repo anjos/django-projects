@@ -15,6 +15,10 @@ from django.utils.translation import string_concat as _cat
 from django.utils.translation import ungettext as _n
 from django.core.exceptions import ObjectDoesNotExist
 
+def cmp_repo_changed(r1, r2):
+  """Compares two repositories w.r.t. their last changed date. Older first."""
+  return cmp(r1.commits()[0].committed_date, r2.commits()[0].committed_date)
+
 def is_git_repo(d):
   """Tells if a certain directory is a readable git repository."""
   candidate = os.path.join(d, '.git')

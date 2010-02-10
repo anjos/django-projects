@@ -54,8 +54,9 @@ def projects_dsa_pubkey(request, slug):
   return HttpResponse(p.dsa_pubkey, mimetype="text/plain")
 
 def repo_list(request, template_name='djpro/repo_list.html'):
+  repos = sorted(get_repos(), cmp=cmp_repo_changed, reverse=True)
   return render_to_response(template_name, 
-                            {'repos': get_repos(),},
+                            {'repos': repos,},
                             context_instance=RequestContext(request))
 
 def repo_detail(request, template_name='djpro/repo.html'):
