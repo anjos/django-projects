@@ -60,5 +60,8 @@ function link_install () {
   cd -;
 }
 
-install djpro ${djpro}
+# If you define "LINK" to any value, we use the link install strategy
+if [ -n "$LINK" ]; then link_install djpro ${djpro};
+else install djpro ${djpro}; fi
+
 install rosetta ${rosetta}
