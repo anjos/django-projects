@@ -40,10 +40,15 @@ update_languages:
 	@for l in $(LANGUAGES); do cp test/sw/djpro*/djpro/locale/$$l/LC_MESSAGES/django.po djpro/locale/$$l/LC_MESSAGES/; done
 
 test: 
-	@cd test && ./run.sh
+	@cd test && sed -e "s/^link_install $(PROJECT)/install $(PROJECT)/" -i install.sh && ./run.sh
+
+link_test:
+	@cd test && sed -e "s/^install $(PROJECT)/link_install $(PROJECT)/" -i install.sh && ./run.sh
+	@sed -e "s/^link_install $(PROJECT)/install $(PROJECT)/" -i install.sh
 
 clean: remove_django
 	find . -name '*~' -print0 | xargs -0 rm -vf 
 	find . -name '*.py?' -print0 | xargs -0 rm -vf
 	@cd test && ./cleanup.sh
 	@rm -rf *.egg-info build temp
+	@sed -e "s/^link_install $(PROJECT)/install $(PROJECT)/" -i test/install.sh
