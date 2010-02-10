@@ -15,6 +15,11 @@ from django.utils.translation import string_concat as _cat
 from django.utils.translation import ungettext as _n
 from django.core.exceptions import ObjectDoesNotExist
 
+# setup the time zone once for comparison functions
+import pytz
+TZ = pytz.UTC
+if os.environ.has_key('TZ'): TZ = pytz.timezone(os.environ['TZ'])
+
 def cmp_repo_changed(r1, r2):
   """Compares two repositories w.r.t. their last changed date. Older first."""
   return cmp(r1.commits()[0].committed_date, r2.commits()[0].committed_date)
@@ -101,8 +106,7 @@ def get_tree(tree, path):
   return retval
 
 def relative_date(t):
-
-  d = dateutils.relativedelta(datetime.datetime.now(), t)
+  d = dateutils.relativedelta(datetime.datetime.now(TZ), t)
   if d.years: 
     return _n(u'%(c)d year ago', u'%(c)d years ago', d.years) % {'c': d.years }
   if d.months: 
@@ -110,11 +114,11 @@ def relative_date(t):
   if d.days: 
     return _n(u'%(c)d day ago', u'%(c)d days ago', d.days) % {'c': d.days }
   if d.hours: 
-    return _n(u'%(c)d hour ago', u'%(c)d hours ago', d.days) % {'c': d.hours }
+    return _n(u'%(c)d hour ago', u'%(c)d hours ago', d.hours) % {'c': d.hours }
   if d.minutes: 
-    return _n(u'%(c)d minute ago', u'%(c)d minutes ago', d.days) % {'c': d.minutes }
+    return _n(u'%(c)d minute ago', u'%(c)d minutes ago', d.minutes) % {'c': d.minutes }
   if d.seconds: 
-    return _n(u'%(c)d second ago', u'%(c)d seconds ago', d.days) % {'c': d.seconds }
+    return _n(u'%(c)d second ago', u'%(c)d seconds ago', d.seconds) % {'c': d.seconds }
 
   return _(u'just now')
 
