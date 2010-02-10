@@ -14,16 +14,22 @@
     <table>
       <tr>
         <th>{% trans "Project" %}</th>
+        <th>{% trans "Version" %}</th>
         <th>{% trans "Description" %}</th>
-        <th>{% trans "Owner" %}</th>
         <th>{% trans "Last change" %}</th>
       </tr>
       {% for repo in repos %}
       <tr class="{% cycle 'even' 'odd' %}">
         <td><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{{ repo.path|name }}</a></td>
+        {% if repo.tags %}
+        {% with repo.tags|reverse as tl %}
+        <td class="tags"><a href="{% url djpro:download-tree tl.0.commit %}?r={{ repo.path|name }}" title="{% trans 'download' %}"><span class="tag">{{ tl.0.name }}</span></a></td>
+        {% endwith %}
+        {% else %}
+        <td class="tags"></td>
+        {% endif %}
         <td class="summary">{{ repo.description }}</td>
-        <td>{{ repo.commits.0.author.name }}</td>
-        <td>{{ repo.commits.0.committed_date|relative_date }}</td>
+        <td>{{ repo.commits.0.committed_date|relative_date }} {% trans "by" %} {{ repo.commits.0.author.name }}</td>
       </tr>
       {% endfor %}
     </table>
