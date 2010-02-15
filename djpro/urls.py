@@ -48,6 +48,7 @@ urlpatterns = patterns('',
                        url(r'^repo/raw/(?P<commit>[\w\d]+)/$', repo_raw, name='view-raw'),
                        url(r'^repo/tree/(?P<commit>[\w\d]+)/$', repo_tree, name='view-tree'),
                        url(r'^repo/archive/(?P<commit>[\w\d]+)/$', download_tree, name='download-tree'),
+                       url(r'^repo/download/$', download_release, name='download-release'),
                        url(r'^repo/history/(?P<commit>[\w\d]+)/$', repo_history, name='view-history'),
                       
                        # entry key for projects

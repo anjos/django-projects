@@ -153,7 +153,9 @@ def repo_diff(request, commit, template_name='djpro/repo_diff.html'):
                             }, 
                             context_instance=RequestContext(request))
 
-def download_tree(request, commit=None):
+def download_tree(request, commit=None, filename=None):
+
+  """Downloads any tree from a project."""
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 
   r = get_repo(request.GET['r'])
   if commit: 
@@ -163,6 +165,7 @@ def download_tree(request, commit=None):
     head = get_head(r, request.GET.get('h', None))
     c = head.commit
     root = r.tree()
+
   p = request.GET.get('t', '').strip(' ' + os.sep)
   t = get_tree(root, p)
   if not t: raise ObjectDoesNotExist
@@ -171,10 +174,39 @@ def download_tree(request, commit=None):
   data = r.archive_tar_gz(t.id)
    
   retval = HttpResponse(data, mimetype='application/x-tar-gz')
-  filename = t.name
-  if not filename: filename = os.path.basename(r.wd)
+
+  if not filename:
+    if t.name: filename = t.name
+    else:
+      filename = os.path.basename(r.wd).replace('.git','',1)
+    filename += '-%s' % c.id[:8]
+
   retval['Content-Disposition'] = 'attachment; filename=%s.tar.gz' % filename 
   return retval
+
+def download_release(request):
+  """Downloads a particular tag or the head of a certain branch."""
+  if not request.GET.has_key('r'): raise ObjectDoesNotExist
+  r = get_repo(request.GET['r'])
+
+  commit = None
+  filename = None
+
+  project_name = os.path.basename(r.wd).replace('.git','',1)
+  if request.GET.has_key('tag'): #user chose a tag
+    for k in r.tags: 
+      if k.name == request.GET['tag']: #found tag
+        return download_tree(request, commit=k.commit.id,
+            filename=project_name + '-%s' % k.name)
+  elif request.GET.has_key('head'): #user wants the head of a branch
+    for k in r.heads:
+      if k.name == request.GET['head']: #found tag
+        return download_tree(request, commit=k.commit.id,
+            filename=project_name + '-%s-head' % k.name)
+
+  # if you get to this point the user has not provided a t or h tag, or we
+  # could not find the referred tag or branch.
+  raise ObjectDoesNotExist
 
 def repo_tree(request, commit=None, template_name='djpro/repo_tree.html'):
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 

@@ -17,7 +17,7 @@
             <tr class="{% cycle 'even' 'odd' %}">
               <td class="tags"><span class="tag">{{ tag.name }}</span></td>
               <td class="tree"><a href="{% url djpro:view-tree tag.commit %}?r={{ repo.path|name }}">{% trans "tree" %}</a></td>
-              <td class="download"><a href="{% url djpro:download-tree tag.commit %}?r={{ repo.path|name }}">{% trans "download" %}</a></td>
+              <td class="download"><a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ tag.name }}">{% trans "download" %}</a></td>
               <td class="date">{{ tag.commit.committed_date|relative_date }}</td>
             </tr>
             {% endfor %}
