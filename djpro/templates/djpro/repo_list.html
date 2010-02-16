@@ -23,7 +23,7 @@
         <td><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{{ repo.path|name }}</a></td>
         {% if repo.tags %}
         {% with repo.tags|reverse as tl %}
-        <td class="tags"><a href="{% url djpro:download-tree tl.0.commit %}?r={{ repo.path|name }}" title="{% trans 'download' %}"><span class="tag">{{ tl.0.name }}</span></a></td>
+        <td class="tags"><a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ tl.0.name }}" title="{% trans 'download' %}"><span class="tag">{{ tl.0.name }}</span></a></td>
         {% endwith %}
         {% else %}
         <td class="tags"></td>
