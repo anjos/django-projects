@@ -142,39 +142,29 @@
   font-weight: bold;
   font-size: 0.9em;
   padding: 0.1em;
-  -moz-border-radius: 0.3em;
-  -webkit-border-radius: 0.3em;
-  border-radius: 0.3em;
-  border-style: groove;
-  border-width: 2px;
+  border-style: outset;
+  border-width: 1px;
+}
+
+.repository td.tags .tag:hover {
+  border-style: inset;
 }
 
 /* niceties for heads */
-.repository ul.heads {
-  text-indent: -2em;
-}
-
-.repository ul.heads li {
-  display: inline;
-  list-style: none;
+.repository td.heads .head {
   background-color: #66f;
-  border-color: #66f;
+  border-color: #669;
   color: white;
   font-family: arial, helvetica, sans;
   font-weight: bold;
   font-size: 0.9em;
   padding: 0.1em;
-  -moz-border-radius: 0.3em;
-  -webkit-border-radius: 0.3em;
-  border-radius: 0.3em;
-  border-style: groove;
-  border-width: 2px;
+  border-style: outset;
+  border-width: 1px;
 }
 
-.repository ul.heads a {
-  text-decoration: none;
-  color: #fff;
-  padding: 0.3em;
+.repository td.heads .head:hover {
+  border-style: inset;
 }
 
 /* mode lines */

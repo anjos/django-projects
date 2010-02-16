@@ -1,0 +1,29 @@
+{%load i18n repositories %}
+{% comment %}Requires the list of repositories in "repos"{% endcomment %}
+<table>
+  <tr>
+    <th>{% trans "Project" %}</th>
+    <th>{% trans "Version" %}</th>
+    <th>{% trans "Description" %}</th>
+    <th>{% trans "Last change" %}</th>
+  </tr>
+  {% for repo in repos %}
+  <tr class="{% cycle 'even' 'odd' %}">
+    <td><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{{ repo.path|name }}</a></td>
+    {% if repo.tags %}
+    {% with repo.tags|reverse as tl %}
+    <td class="tags"><a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ tl.0.name }}" title="{% trans 'download release' %} {{ tl.0.name }}"><span class="tag">{{ tl.0.name }}</span></a></td>
+    {% endwith %}
+    {% else %}
+    {% comment %}If the user has no tags, we offer the heads{% endcomment %}
+    <td class="heads">
+      {% for head in repo.heads %}
+      <a href="{% url djpro:download-release %}?r={{ repo.path|name }}&head={{ head.name }}" title="{% trans 'download head' %} {{ head.name }}"><span class="head">{{ head.name }}</span></a>
+      {% endfor %}
+    </td>
+    {% endif %}
+    <td class="summary">{{ repo.description }}</td>
+    <td>{{ repo.commits.0.committed_date|relative_date }} {% trans "by" %} {{ repo.commits.0.author.name }}</td>
+  </tr>
+  {% endfor %}
+</table>

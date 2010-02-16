@@ -16,12 +16,10 @@
       </tr>
       <tr class="bubble_subtitle"><td>{% trans "Heads" %}</td></tr>
       <tr>
-        <td>
-          <ul class="heads">
-              {% for head in repo.heads %}
-              <li><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}&h={{ head.name }}" title="{% trans 'switch to this head' %}">{{ head.name }}</a></li>
-              {% endfor %}
-          </ul>
+        <td class="heads">
+          {% for head in repo.heads %}
+          <a href="{% url djpro:view-repo %}?r={{ repo.path|name }}&h={{ head.name }}" title="{% trans 'switch to this head' %}"><span class="head">{{ head.name }}</span></a>
+          {% endfor %}
         </td>
       </tr>
     </table>

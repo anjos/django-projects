@@ -9,6 +9,7 @@
 from django import template
 register = template.Library()
 from djpro.conf import settings
+from djpro.utils import *
 
 def repo_media(context):
   context["pygments_theme"] = settings.DJPRO_HIGHLIGHT_STYLE
@@ -20,8 +21,18 @@ def summary_bubble(repo):
   return {'repo': repo}
 
 @register.inclusion_tag('djpro/embed/tag_bubble.html')
-def tag_bubble(repo):
-  return {'repo': repo}
+def tag_bubble(repo, max_tags=0):
+  tags = repo.tags
+  tags.reverse()
+  if max_tags > 0: tags = tags[:max_tags]
+  return {'repo': repo, 'tags': tags}
+
+@register.inclusion_tag('djpro/embed/list_bubble.html')
+def list_bubble(max_repos=0):
+  repos = get_repos()
+  repos.sort(cmp=cmp_repo_changed, reverse=True)
+  if max_repos > 0: repos = repos[:max_repos] 
+  return {'repos': repos,}
 
 @register.inclusion_tag('djpro/embed/shortlog.html')
 def shortlog(repo, head, commits):
