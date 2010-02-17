@@ -1,13 +1,9 @@
 {% load i18n repositories %}
 {% comment %}requires "repo" and "commit"{% endcomment %}
-<span class="bubble">
-  <span class="navigation">
-    <ul>
-      <li><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "summary" %}</a></li>
-      <li><a href="{% url djpro:view-commit commit %}?r={{ repo.path|name }}">{% trans "commit" %}</a></li>
-      {% if commit.parents %}
-      <li><a href="{% url djpro:view-commit commit.parents.0 %}?r={{ repo.path|name }}">{% trans "parent" %}</a></li>
-       {% endif %}
-    </p>
-  </span>
-</span>
+<p class="navigation">
+  <a href="{% url djpro:view-repo %}?r={{ repo.path|name }}"><span class="navigation">{% trans "summary" %}</span></a>
+  <a href="{% url djpro:view-commit commit %}?r={{ repo.path|name }}"><span class="navigation">{% trans "commit" %}</span></a>
+{% if commit.parents %}
+  <a href="{% url djpro:view-commit commit.parents.0 %}?r={{ repo.path|name }}"><span class="navigation">{% trans "parent" %}</span></a>
+</p>
+{% endif %}
