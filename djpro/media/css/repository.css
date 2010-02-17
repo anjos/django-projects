@@ -147,13 +147,15 @@
 }
 
 .repository td.tags .tag:hover {
+  background-color: #0c0;
+  border-color: #0c0;
   border-style: inset;
 }
 
 /* niceties for heads */
 .repository td.heads .head {
-  background-color: #66f;
-  border-color: #669;
+  background-color: #66b;
+  border-color: #66b;
   color: white;
   font-family: arial, helvetica, sans;
   font-weight: bold;
@@ -164,6 +166,8 @@
 }
 
 .repository td.heads .head:hover {
+  background-color: #66f;
+  border-color: #66f;
   border-style: inset;
 }
 
@@ -198,10 +202,8 @@
 }
 
 .repository p.navigation .navigation {
-  display: inline;
-  list-style: none;
-  background-color: #844;
-  border-color: #844;
+  background-color: #f74;
+  border-color: #f74;
   color: white;
   font-family: arial, helvetica, sans;
   font-weight: bold;
@@ -212,6 +214,8 @@
 }
 
 .repository p.navigation .navigation:hover  {
+  background-color: #f00;
+  border-color: #f00;
   border-style: inset;
 }
 
