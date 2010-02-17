@@ -1,9 +1,10 @@
 {% extends "base.html" %}
-{% load i18n repositories embed %}
+{% load i18n repositories repository_bubble djpro_media %}
 
 {% block media %}
 {{ block.super }}
-{% repo_media %}
+{% djpro_repository_media %}
+{% djpro_bubble_media %}
 {% endblock %}
 
 {% block title %}{% trans "Repository" %} {{ repo.path|name }} :: {{ p }}{% endblock %}
