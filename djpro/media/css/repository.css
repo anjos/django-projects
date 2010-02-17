@@ -168,23 +168,65 @@
 }
 
 /* mode lines */
-.mode {
+.repository .mode {
   width: 8em;
   font-family: courier, monospace;
 }
 
 /* actions should be small */
-.action {
+.repository .action {
   width: 2em;
 }
 
 /* for files that are created, deleted and moved */
-tr.new td {
+.repository tr.new td {
   background-color: rgba(0,255,0,0.2);
 }
-tr.deleted td {
+
+.repository tr.deleted td {
   background-color: rgba(255,0,0,0.2);
 }
-tr.renamed td {
+
+.repository tr.renamed td {
   background-color: rgba(255,255,0,0.2);
 }
+
+.repository p.navigation {
+  text-align: right;
+  margin: 0em 0.1em 0em 0em;
+  height: 1.5em;
+}
+
+.repository p.navigation .navigation {
+  display: inline;
+  list-style: none;
+  background-color: #844;
+  border-color: #844;
+  color: white;
+  font-family: arial, helvetica, sans;
+  font-weight: bold;
+  font-size: 0.9em;
+  padding: 0.2em;
+  border-style: outset;
+  border-width: 1px;
+}
+
+.repository p.navigation .navigation:hover  {
+  border-style: inset;
+}
+
+/* This file defines the main style of the page layout for repositories views */
+
+.repository table.layout {
+  margin-left: auto;
+  margin-right: auto;
+  border-spacing: 0.5em;
+}
+
+.repository table.layout tr td.layout
+{
+  /* border: 1px solid red; */
+  padding: 0px;
+  vertical-align: top;
+}
+

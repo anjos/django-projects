@@ -1,49 +1,49 @@
-div.project p.title {
+.project p.title {
   margin-top: 1em;
   font-size: 2.0em;
   font-weight: bold;
 }
 
-div.project p.details {
+.project p.details {
   margin-top: 1em;
   font-size: 1.5em;
   font-weight: bold;
 }
 
-div.project table {
+.project table {
   width: 100%;
   padding: 5px;
 }
 
-div.project table tr.even {
+.project table tr.even {
   background-color: #ddd;
 }
 
-div.project table.project_list {
+.project table.project_list {
   font-size: 14px;
 }
 
-div.project table.project_list tr {
+.project table.project_list tr {
   height: 50px;
 }
 
-div.project table.project_list td {
+.project table.project_list td {
   padding: 3px;
 }
 
-div.project table.project_list tr.even {
+.project table.project_list tr.even {
   background-color: #cef;
 }
 
-div.project table.project_list tr.odd {
+.project table.project_list tr.odd {
   background-color: #eee;
 }
 
-div.project div.downloads {
+.project .downloads {
   float: right;
 }
 
-div.project span.download_decoration {
+.project span.download_decoration {
   background-image: url(../img/download.png);
   float: left;
   border-width: 0px;
@@ -53,16 +53,16 @@ div.project span.download_decoration {
   background-repeat: no-repeat; 
 }
 
-div.project p.downloads_header {
+.project p.downloads_header {
 }
 
-div.project a.download_link {
+.project a.download_link {
   text-decoration: none;
   border-width: 0px;
   color: #333;
 }
 
-div.project p.download_entry {
+.project p.download_entry {
   padding: 0.7em;
   background-color: #8f8;
   -moz-border-radius: 0.5em; 
@@ -71,30 +71,30 @@ div.project p.download_entry {
   border-radius: 0.5em;
 }
 
-div.project font.download_detail {
+.project font.download_detail {
   font-size: 0.6em;
   font-style: italic;
 }
 
-div.project a.screenshot_link {
+.project a.screenshot_link {
   text-decoration: none;
   border-width: 0px;
   color: #fff;
 }
 
-div.project p.screenshot_caption {
+.project p.screenshot_caption {
   font-style: italic;
   font-size: 0.6em;
 }
 
 /* navigation links for each project, on the top of the detail page */
-ul.quicklinks {
+.project ul.quicklinks {
   text-align: right;
   margin: 0em 0.1em 0em 0em;
   height: 1.5em;
 }
 
-ul.quicklinks li {
+.project ul.quicklinks li {
   display: inline;
   list-style: none;
   background-color: #484;
@@ -108,13 +108,13 @@ ul.quicklinks li {
   border-width: 2px;
 }
 
-ul.quicklinks li:hover {
+.project ul.quicklinks li:hover {
   background-color: #262;
   border-color: #262;
   border-style: inset;
 }
 
-ul.quicklinks a {
+.project ul.quicklinks a {
   text-decoration: none;
   color: #fff;
   padding: 0.3em;
