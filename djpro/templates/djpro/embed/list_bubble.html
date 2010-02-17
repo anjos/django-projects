@@ -8,12 +8,14 @@
         <tr>
           <td class="buble_contents">
             <table class="inner">
+              {% if compact %}
               <tr>
                 <th>{% trans "Project" %}</th>
                 <th>{% trans "Version" %}</th>
                 <th>{% trans "Description" %}</th>
                 <th>{% trans "Last change" %}</th>
               </tr>
+              {% endif %}
               {% for repo in repos %}
               <tr class="{% cycle 'even' 'odd' %}">
                 <td><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{{ repo.path|name }}</a></td>
@@ -29,7 +31,7 @@
                   {% endfor %}
                 </td>
                 {% endif %}
-                <td class="summary">{{ repo.description }}</td>
+                <td class="summary">{% if not compact %}{{ repo.description }}{% else %}{{ repo.description|truncatewords:"8" }}{% endif %}</td>
                 <td>{{ repo.commits.0.committed_date|relative_date }}</td>
               </tr>
               {% endfor %}

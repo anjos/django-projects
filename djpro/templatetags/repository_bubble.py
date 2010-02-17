@@ -22,11 +22,11 @@ def tag_bubble(repo, max_tags=0):
   return {'repo': repo, 'tags': tags}
 
 @register.inclusion_tag('djpro/embed/list_bubble.html')
-def list_bubble(max_repos=0):
+def list_bubble(max_repos=0, compact=False):
   repos = get_repos()
   repos.sort(cmp=cmp_repo_changed, reverse=True)
   if max_repos > 0: repos = repos[:max_repos] 
-  return {'repos': repos,}
+  return {'repos': repos, 'compact': compact}
 
 @register.inclusion_tag('djpro/embed/shortlog.html')
 def shortlog(repo, head, commits):
