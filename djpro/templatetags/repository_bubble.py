@@ -8,13 +8,7 @@
 
 from django import template
 register = template.Library()
-from djpro.conf import settings
 from djpro.utils import *
-
-def repo_media(context):
-  context["pygments_theme"] = settings.DJPRO_HIGHLIGHT_STYLE
-  return context
-register.inclusion_tag('djpro/embed/media.html', takes_context=True)(repo_media)
 
 @register.inclusion_tag('djpro/embed/summary_bubble.html')
 def summary_bubble(repo):
