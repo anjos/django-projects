@@ -30,7 +30,7 @@
                 </td>
                 {% endif %}
                 <td class="summary">{{ repo.description }}</td>
-                <td>{{ repo.commits.0.committed_date|relative_date }} {% trans "by" %} {{ repo.commits.0.author.name }}</td>
+                <td>{{ repo.commits.0.committed_date|relative_date }}</td>
               </tr>
               {% endfor %}
             </table>
