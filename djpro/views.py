@@ -16,6 +16,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from utils import *
 from conf import settings
 from models import *
+import hashlib
 
 def project_detail(request, slug, **kwargs):
 
@@ -269,3 +270,29 @@ def repo_blob(request, commit=None, template_name='djpro/repo_blob.html'):
                             }, 
                             context_instance=RequestContext(request))
 
+def pypi_index(request, template_name='djpro/pypi_index.html'):
+  """Returns a site package list in the easy_install style. See documentation
+  here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
+  """
+  objects = Project.objects.filter(python_project=True).order_by('slug') 
+  objects = [k for k in objects if objects.get_repo().tags]
+  return render_to_response(template_name, { 'object_list': objects },
+      context_instance=RequestContext(request))
+
+def pypi_package(request, slug, version=None, template_name='djpro/pypi_package.html'):
+  """Returns a single package page in the easy_install style. See documentation
+  here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
+  """
+  object = Project.objects.get(slug=slug)
+  if version: tarball = object.repo().archive_tar_gz(version)
+  else: tarball = object.repo().archive_tar_gz(object.repo().tags[-1].name)
+  md5 = hashlib.md5()
+  md5.update(tarball)
+  return render_to_response(template_name, 
+      { 
+        'object': object,
+        'version': version,
+        'size': len(tarball),
+        'md5': md5.hexdigest()
+      },
+      context_instance=RequestContext(request))

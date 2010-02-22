@@ -53,10 +53,9 @@ function install () {
 function link_install () {
   install $1 $2;
   echo "### Link installing $1..."
-  location=`readlink -f $2/$1`;
   cd ${INSTALLDIR}/djpro-*;
   rm -rf $1;
-  ln -s $location .;
+  ln -s ../../$2/$1 .;
   cd -;
 }
 
@@ -65,3 +64,11 @@ if [ -n "$LINK" ]; then link_install djpro ${djpro};
 else install djpro ${djpro}; fi
 
 install rosetta ${rosetta}
+
+# Make sure we link PIL before we start
+if [ -d ${INSTALLDIR}/PIL-* ]; then
+  cd ${INSTALLDIR}; 
+  rm -f PIL; 
+  ln -s PIL-* PIL; 
+  cd -;
+fi

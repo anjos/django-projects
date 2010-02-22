@@ -40,6 +40,13 @@ urlpatterns = patterns('',
                            list_detail.object_detail, notes_detail,
                            name='note'),
 
+                       # a PyPI-like index for easy-install and pip
+                       url(r'^pypi/$', pypi_index, name='pypi-index'), 
+                       url(r'^pypi/(?P<slug>\w+)/$', pypi_package,
+                         name='pypi-package'), 
+                       url(r'^pypi/(?P<slug>\w+)/(?P<version>[\d\.]+/$', 
+                         pypi_package, name='pypi-package-version'), 
+
                        # urls concerning git repositories access
                        url(r'^repo/$', repo_detail, name='view-repo'),
                        url(r'^repo/commit/(?P<commit>[\w\d]+)/$', repo_commit, name='view-commit'),

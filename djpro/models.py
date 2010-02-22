@@ -4,27 +4,27 @@ from django.utils.translation import ugettext
 from django.utils.translation import string_concat  as _cat
 from conf import settings
 import os, datetime
-import git
 from db.fields import GitRepoField
+import utils
 
 class Project(models.Model):
   """Describes a software project."""
   
-  name = models.CharField(_('Project name'), max_length=128, help_text=_('Insert a short, meaningful unique name for your project.'))
+  name = models.CharField(_(u'Project name'), max_length=128, help_text=_('Insert a short, meaningful unique name for your project.'))
 
-  slug = models.SlugField(_('Slug'), max_length=32, primary_key=True, help_text=_('Insert a short, meaningful unique slug for your project. Only letters, digits and underscores.'))
+  slug = models.SlugField(_(u'Slug'), max_length=32, primary_key=True, help_text=_('Insert a short, meaningful unique slug for your project. Only letters, digits and underscores.'))
 
-  updated = models.DateField(_('Last update'), auto_now_add=True, help_text=_('The date on the last update of this project description.'))
+  updated = models.DateField(_(u'Last update'), auto_now_add=True, help_text=_('The date on the last update of this project description.'))
 
-  brief = models.CharField(_('Brief description'), max_length=1024, help_text=_('Brief description of this project (max %d characters)' % 1024))
+  description = models.TextField(_(u'Description'), null=True, blank=True, help_text=_('The description of the project is presented on its detailed view page. You should be really descriptive here.'))
 
-  description = models.TextField(_('Description'), null=True, blank=True, help_text=_('The description of the project is presented on its detailed view page. You should be really descriptive here.'))
+  git_dir = GitRepoField(_(u'Git repository'), path=settings.DJPRO_GIT_BASE_DIRECTORY, recursive=True, max_length=512, help_text=_('Choose the git directory containing your project.'), null=True, blank=True)
 
-  git_dir = GitRepoField(_('Git repository'), path=settings.DJPRO_GIT_BASE_DIRECTORY, recursive=True, max_length=512, help_text=_('Choose the git directory containing your project.'), null=True, blank=True)
+  wiki_page = models.CharField(_(u'Wiki page'), max_length=1024, help_text=_('Complete URL for the top wiki page of your project'), null=True, blank=True)
 
-  wiki_page = models.CharField(_('Wiki page'), max_length=1024, help_text=_('Complete URL for the top wiki page of your project'), null=True, blank=True)
+  dsa_pubkey = models.TextField(_(u'DSA project key'), null=True, blank=True, help_text=_('If you have one, insert here the <b>public</b> DSA key for this project.')) 
 
-  dsa_pubkey = models.TextField(_('DSA project key'), null=True, blank=True, help_text=_('If you have one, insert here the <b>public</b> DSA key for this project.')) 
+  python_package = models.BooleanField(_(u'Python project'), help_text=_(u'Check this box if this is a python project'), default=False, blank=False)
 
   def public_downloads(self):
     return self.download_set.filter(development=False)
@@ -53,6 +53,10 @@ class Project(models.Model):
     else:
       return self.updated
   updated_on.short_description = _('Last updated')
+
+  def repo(self):
+    """Returns the Git repository as a python object that can be queried."""
+    return get_repo(self.git_dir)
 
   # make it translatable
   class Meta:
