@@ -6,7 +6,8 @@
   {{ block.super }}
   <link href="{{ MEDIA_URL }}djpro/css/style.css" rel="stylesheet" type="text/css" media="screen" />
   <link rel="download" href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ last_tag.name }}{% comment %}#md5={{ md5 }}{% endcomment %}"/>
-  {% for t in previous_tags %}<link rel="download" href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}"/>{% endfor %}
+  {% for t in previous_tags %}<link rel="download" href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}"/>
+  {% endfor %}
 {% endblock %}
 
 {% block content %}
