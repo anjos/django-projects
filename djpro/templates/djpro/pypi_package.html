@@ -22,9 +22,20 @@
 
 <!-- TODO:
   * Add a way to put here links to eventual documentation in ReST format
+  * make md5 sums work...
   -->
   {% with last_tag.commit.committed_date|tuple_to_date as cdate %}
-  <p class="download">{% trans "Download" %}: <a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={% firstof version last_tag.name %}#md5={{ md5 }}">{{ object.slug }}-{% firstof version last_tag.name %}.tar.gz</a> ({{ size }} {% trans "bytes" %}), {% trans "tagged" %} {{ cdate|date:"r" }} ({{ cdate|timesince }} {% trans "ago" %})</p>
+  <p class="download">{% trans "Download" %}: <a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={% firstof version last_tag.name %}{% comment %}#md5={{ md5 }}{% endcomment %}">{{ object.slug }}-{% firstof version last_tag.name %}.tar.gz</a> ({{ size }} {% trans "bytes" %}), {% trans "tagged" %} {{ cdate|date:"r" }} ({{ cdate|timesince }} {% trans "ago" %})</p>
   {% endwith %}
+
+  <p class="subtitle">{% trans "Previous downloads" %}</p>
+  <table class="downloads">
+    <tr><th>{% trans "package" %}</th><th>{% trans "date" %}</th></tr>
+    {% for t in previous_tags %}
+    <tr>
+      <td class="package"><a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}">{{ object.slug }}-{{ t.name }}.tar.gz</a></td>
+      <td class="date">{{ t.commit.committed_date|tuple_to_date|date:"r" }} ({{ t.commit.committed_date|tuple_to_date|timesince }} {% trans "ago" %})</td>
+    {% endfor %}
+  </table>
 </div>
 {% endblock %}

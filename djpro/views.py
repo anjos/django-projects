@@ -284,7 +284,8 @@ def pypi_index(request, template_name='djpro/pypi_index.html'):
       },
       context_instance=RequestContext(request))
 
-def pypi_package(request, slug, version=None, template_name='djpro/pypi_package.html'):
+def pypi_package(request, slug, version=None, 
+    template_name='djpro/pypi_package.html'):
   """Returns a single package page in the easy_install style. See documentation
   here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
   """
@@ -298,15 +299,15 @@ def pypi_package(request, slug, version=None, template_name='djpro/pypi_package.
   if version: tarball = repo.archive_tar_gz(version)
   else: tarball = repo.archive_tar_gz(tags[-1].name)
 
-  md5 = hashlib.md5()
-  md5.update(tarball)
+  # md5 = hashlib.md5(tarball).hexdigest()
   return render_to_response(template_name, 
       { 
         'object': object,
         'repo': repo,
         'last_tag': tags[-1],
+        'previous_tags': reversed(tags[:-1]),
         'version': version,
         'size': len(tarball),
-        'md5': md5.hexdigest()
+        #'md5': md5
       },
       context_instance=RequestContext(request))

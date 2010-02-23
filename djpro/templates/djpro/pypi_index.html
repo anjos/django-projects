@@ -11,10 +11,10 @@
 <div class="project">
   <p class="title">{% trans "Python Package Index" %}</p>
   <p class="intro">{% blocktrans with object_list|length as counter %}This is my private python package repository. It presently contains {{ counter }} packages. To install a package from this repository use: {% endblocktrans %}</p>
-  <pre class="code">$ easy_install -f http://{{ site_domain }}{% url djpro:pypi-index %} &lt;package-name&gt; 
+  <pre class="code">$ easy_install -f http://{{ site_domain }}{% url djpro:pypi-simple-index %} &lt;package-name&gt; 
   </pre>
   <p class="intro">Optionally, use pip:</p>
-  <pre class="code">$ pip -f http://{{ site_domain }}{% url djpro:pypi-index %} &lt;package-name&gt;
+  <pre class="code">$ pip -f http://{{ site_domain }}{% url djpro:pypi-simple-index %} &lt;package-name&gt;
   </pre>
   {% if object_list %}
     <table class="project_list">

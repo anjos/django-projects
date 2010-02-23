@@ -42,8 +42,14 @@ urlpatterns = patterns('',
 
                        # a PyPI-like index for easy-install and pip
                        url(r'^pypi/$', pypi_index, name='pypi-index'), 
+                       url(r'^pypi/simple/$', pypi_index, 
+                         {'template_name': 'djpro/pypi_simple_index.html'},
+                         name='pypi-simple-index'), 
                        url(r'^pypi/(?P<slug>\w+)/$', pypi_package,
                          name='pypi-package'), 
+                       url(r'^pypi/(?P<slug>\w+)/simple/$', pypi_package,
+                         {'template_name': 'djpro/pypi_simple_package.html'},
+                         name='pypi-simple-package'),
                        url(r'^pypi/(?P<slug>\w+)/(?P<version>[\d\.]+)/$', 
                          pypi_package, name='pypi-package-version'), 
 
