@@ -44,7 +44,7 @@ urlpatterns = patterns('',
                        url(r'^pypi/$', pypi_index, name='pypi-index'), 
                        url(r'^pypi/(?P<slug>\w+)/$', pypi_package,
                          name='pypi-package'), 
-                       url(r'^pypi/(?P<slug>\w+)/(?P<version>[\d\.]+/$', 
+                       url(r'^pypi/(?P<slug>\w+)/(?P<version>[\d\.]+)/$', 
                          pypi_package, name='pypi-package-version'), 
 
                        # urls concerning git repositories access

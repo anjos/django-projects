@@ -11,10 +11,10 @@
 <div class="project">
   <p class="title">{% trans "Python Package Index" %}</p>
   <p class="intro">{% blocktrans with object_list|length as counter %}This is my private python package repository. It presently contains {{ counter }} packages. To install a package from this repository use: {% endblocktrans %}</p>
-  <pre class="code">$ easy_install -f {% url djpro:pypi-index %} &lt;package-name&gt; 
+  <pre class="code">$ easy_install -f http://{{ site_domain }}{% url djpro:pypi-index %} &lt;package-name&gt; 
   </pre>
   <p class="intro">Optionally, use pip:</p>
-  <pre class="code">$ pip -f {% url djpro:pypi-index %} &lt;package-name&gt;
+  <pre class="code">$ pip -f http://{{ site_domain }}{% url djpro:pypi-index %} &lt;package-name&gt;
   </pre>
   {% if object_list %}
     <table class="project_list">
@@ -24,11 +24,11 @@
         <th>{% trans "Description" %}</th>
       </tr>
       {% for p in object_list %}
-      {% with p.get_repo.tags|last as last_tag %}
+      {% with p.repo.tags|last as last_tag %}
       <tr class="{% cycle 'even' 'odd' %}">
-        <td class="project_update">{{ last_tag.commit.committed_date|tuple_to_date|date:"Y-m-d H:i O" }}</td>
-        <td class="project_name"><a href="{% url djpro:pypi-package p.slug last_tag.name %}">{{ p.name }} {{ last_tag.name }}</a></td>
-        <td class="description">{{ p.get_repo.description }}</td> 
+        <td class="project_update">{{ last_tag.commit.committed_date|tuple_to_date|date:"Y-m-d H:i:s O" }}</td>
+        <td class="project_name"><a href="{% url djpro:pypi-package-version p.slug last_tag.name %}">{{ p.slug }} {{ last_tag.name }}</a></td>
+        <td class="description">{{ p.repo.description }}</td> 
       </tr>
       {% endwith %}
       {% endfor %}

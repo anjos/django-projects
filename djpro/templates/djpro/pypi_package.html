@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% load i18n markup repositories %}
-{% with object.get_repo.tags|last as last_tag %}
-
-{% block title %}{{ object.slug }} {% if version %}{{ version }}{% else %}{{ last_tag.name }}{% endif %}{% endblock %}
+{% block title %}{{ object.slug }} {% firstof version last_tag.name %}{% endblock %}
 
 {% block media %}
   {{ block.super }}
@@ -11,24 +9,22 @@
 
 {% block content %}
 <div class="project">
-  
 <p class="navigation"><a href="{% url djpro:pypi-index %}"><span class="item">Package Index</span></a></p>
 
-{% if version and version != last_tag.name %}
-<p class="latest"><a href="{% url djpro:pypi-package object.slug %}">{{ object.slug }} {{ last_tag.name }}</a></p>
-{% endif %}
+{% if version %}{% ifnotequal version last_tag.name %}
+<p class="latest">The latest version of this project is: <a href="{% url djpro:pypi-package-version object.slug last_tag.name %}">{{ object.slug }} {{ last_tag.name }}</a></p>
+{% endifnotequal %}{% endif %}
 
-<p class="title">{{ object.slug }} {% if version %}{{ version }}{% else %}{{ last_tag.name }}{% endif %}</p>
-<p class="brief">{{ object.repo.description }}</p>
+<p class="title">{{ object.slug }} {% firstof version last_tag.name %}</p>
+<p class="brief">{{ repo.description }}</p>
 
-{{ object.description|textile }}
+{% if object.description %}{{ object.description|textile }}{% endif %}
 
 <!-- TODO:
   * Add a way to put here links to eventual documentation in ReST format
   -->
-
-  <p class="download">{% trans "Download" %}: <a href="{% url djpro:download-release %}?r={{ object.get_repo.path|name }}&tag={% if version %}{{ version }}{% else %}{{ last_tag.name }}{% endif %}#md5={{ md5 }}">{{ object.slug }}-{% if version %}{{ version }}{% else %}{{ last_tag.name }}{% endif %}.tar.gz</a> ({{ size }} {% trans "bytes" %}), {% trans "tagged" %} {{ last_tag.commit.committed_date|tuple_to_date|date:"c" }}</p>
+  {% with last_tag.commit.committed_date|tuple_to_date as cdate %}
+  <p class="download">{% trans "Download" %}: <a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={% firstof version last_tag.name %}#md5={{ md5 }}">{{ object.slug }}-{% firstof version last_tag.name %}.tar.gz</a> ({{ size }} {% trans "bytes" %}), {% trans "tagged" %} {{ cdate|date:"r" }} ({{ cdate|timesince }} {% trans "ago" %})</p>
+  {% endwith %}
 </div>
 {% endblock %}
-
-{% endwith %}

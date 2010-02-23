@@ -16,7 +16,7 @@ def count_downloads(instance):
 count_downloads.short_description = _(u'Public downloads')
 
 class ProjectAdmin(admin.ModelAdmin):
-  list_display = ('name', 'updated_on', 'git_dir', 'wiki_page', count_downloads, count_all_downloads)
+  list_display = ('name', 'updated_on', 'git_dir', 'python_package', 'wiki_page', count_downloads, count_all_downloads)
   list_filter = ['updated', 'name']
   list_per_page = 10
   ordering = ['-updated']

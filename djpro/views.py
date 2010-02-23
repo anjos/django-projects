@@ -12,6 +12,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from djpro.models import Project, Download
 from django.template import RequestContext
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.contrib.sites.models import Site
+from django.conf import settings as django_settings
 
 from utils import *
 from conf import settings
@@ -274,9 +276,12 @@ def pypi_index(request, template_name='djpro/pypi_index.html'):
   """Returns a site package list in the easy_install style. See documentation
   here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
   """
-  objects = Project.objects.filter(python_project=True).order_by('slug') 
-  objects = [k for k in objects if objects.get_repo().tags]
-  return render_to_response(template_name, { 'object_list': objects },
+  objects = Project.objects.filter(python_package=True).order_by('slug') 
+  objects = [k for k in objects if k.repo().tags]
+  return render_to_response(template_name, 
+      { 'object_list': objects, 
+        'site_domain': Site.objects.get(id=django_settings.SITE_ID).domain,
+      },
       context_instance=RequestContext(request))
 
 def pypi_package(request, slug, version=None, template_name='djpro/pypi_package.html'):
@@ -284,13 +289,22 @@ def pypi_package(request, slug, version=None, template_name='djpro/pypi_package.
   here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
   """
   object = Project.objects.get(slug=slug)
-  if version: tarball = object.repo().archive_tar_gz(version)
-  else: tarball = object.repo().archive_tar_gz(object.repo().tags[-1].name)
+  repo = object.repo()
+  tags = repo.tags
+
+  # if the project has not been tagged, give up at once
+  if not tags: raise ObjectDoesNotExist
+
+  if version: tarball = repo.archive_tar_gz(version)
+  else: tarball = repo.archive_tar_gz(tags[-1].name)
+
   md5 = hashlib.md5()
   md5.update(tarball)
   return render_to_response(template_name, 
       { 
         'object': object,
+        'repo': repo,
+        'last_tag': tags[-1],
         'version': version,
         'size': len(tarball),
         'md5': md5.hexdigest()

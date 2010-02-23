@@ -56,7 +56,7 @@ class Project(models.Model):
 
   def repo(self):
     """Returns the Git repository as a python object that can be queried."""
-    return get_repo(self.git_dir)
+    return utils.get_repo(self.git_dir)
 
   # make it translatable
   class Meta:
