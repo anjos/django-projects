@@ -1,10 +1,14 @@
 {% load repositories %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-  <head><title>Links for {{ object.slug }}</title></head>
+  <head>
+    <title>Links for {{ object.slug }}</title>
+    <link rel="download" href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ last_tag.name }}{% comment %}#md5={{ md5 }}{% endcomment %}"/>
+    {% for t in previous_tags %}<link rel="download" href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}"/>
+  </head>
   <body>
     <h1>Links for {{ object.slug }}</h1>
-    <a rel="download" href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ last_tag.name }}{% comment %}#md5={{ md5 }}{% endcomment %}">{{ object.slug }}-{{ last_tag.name }}.tar.gz</a> 
-    {% for t in previous_tags %}<br/><a rel="download" href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}">{{ object.slug }}-{{ t.name }}.tar.gz</a>
+    <a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ last_tag.name }}{% comment %}#md5={{ md5 }}{% endcomment %}">{{ object.slug }}-{{ last_tag.name }}.tar.gz</a> 
+    {% for t in previous_tags %}<br/><a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}">{{ object.slug }}-{{ t.name }}.tar.gz</a>
     {% endfor %}
  </body>
 </html>
