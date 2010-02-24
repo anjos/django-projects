@@ -6,13 +6,12 @@
 """Tags to help coding your templates.
 """
 
-from datetime import datetime
 import os, stat
 from djpro.conf import settings
 from djpro.utils import relative_date as rd_function
+from djpro.utils import tuple_to_date as tuple_date_function
 from djpro.utils import blob_is_text
 import git
-from pytz import UTC
 
 from django import template
 register = template.Library()
@@ -30,7 +29,7 @@ def first_eight(value):
 @register.filter("tuple_to_date")
 def tuple_to_date(v):
   """Returns a datetime object from the weird's git date/time output."""
-  return datetime(v[0], v[1], v[2], v[3], v[4], v[5], 0, UTC)
+  return tuple_date_function(v) 
 
 @register.filter("relative_date")
 def relative_date(value):

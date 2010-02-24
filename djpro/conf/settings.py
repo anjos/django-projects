@@ -18,3 +18,4 @@ DJPRO_COMMITS_PER_PAGE = getattr(settings, 'DJPRO_COMMITS_PER_PAGE', 15)
 
 # the maximum number of tags to show in the commit summary page
 DJPRO_MAX_TAGS = getattr(settings, 'DJPRO_MAX_TAGS', 10)
+

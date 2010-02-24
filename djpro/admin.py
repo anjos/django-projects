@@ -4,7 +4,7 @@
 # Thu 24 Jul 15:36:10 2008 
 
 from django.contrib import admin
-from djpro.models import Project, Download, Screenshot, Icon
+from djpro.models import * 
 from django.utils.translation import ugettext_lazy as _
 
 def count_all_downloads(instance):
@@ -16,14 +16,15 @@ def count_downloads(instance):
 count_downloads.short_description = _(u'Public downloads')
 
 class ProjectAdmin(admin.ModelAdmin):
-  list_display = ('name', 'updated_on', 'git_dir', 'python_package', 'wiki_page', count_downloads, count_all_downloads)
-  list_filter = ['updated', 'name']
+  list_display = ('name', Project._updated, 'git_dir', count_downloads, count_all_downloads)
+  list_filter = ['changed', 'name']
   list_per_page = 10
-  ordering = ['-updated']
+  ordering = ['-changed']
   search_fields = ['name', 'git_dir']
-  date_hierarchy = 'updated'
+  date_hierarchy = 'changed'
     
-admin.site.register(Project, ProjectAdmin)
+admin.site.register(PythonProject, ProjectAdmin)
+admin.site.register(MacProject, ProjectAdmin)
 
 class DownloadAdmin(admin.ModelAdmin):
   list_display = ('name', 'date', 'development', 'project')

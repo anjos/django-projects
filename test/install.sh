@@ -13,7 +13,7 @@ python_version=`${PYTHON} -c 'import sys;print "%d.%d" % sys.version_info[0:2]'`
 INSTALLDIR=${BASEDIR}/sw
 
 # Versions
-setuptools_egg=setuptools-0.6c9-py${python_version}.egg
+setuptools_egg=setuptools-0.6c11-py${python_version}.egg
 setuptools=http://pypi.python.org/packages/${python_version}/s/setuptools/${setuptools_egg};
 rosetta=http://django-rosetta.googlecode.com/files/django-rosetta-0.4.5.svn.tar.gz
 djpro=..

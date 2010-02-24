@@ -1,13 +1,13 @@
 {% extends "base.html" %}
-{% load i18n markup repositories %}
+{% load i18n markup repositories djpro_filters %}
 {% block title %}{{ object.slug }} {% firstof version last_tag.name %}{% endblock %}
 
 {% block media %}
   {{ block.super }}
   <link href="{{ MEDIA_URL }}djpro/css/style.css" rel="stylesheet" type="text/css" media="screen" />
-  <link rel="download" href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ last_tag.name }}{% comment %}#md5={{ md5 }}{% endcomment %}"/>
-  {% for t in previous_tags %}<link rel="download" href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}"/>
-  {% endfor %}
+  {% if version %}{% ifnotequal version last_tag.name %}
+  <link rel="homepage" href="{% url djpro:pypi-package-version object.slug %}"/>
+  {% endifnotequal %}{% endif %}
 {% endblock %}
 
 {% block content %}
@@ -19,16 +19,18 @@
 {% endifnotequal %}{% endif %}
 
 <p class="title">{{ object.slug }} {% firstof version last_tag.name %}</p>
-<p class="brief">{{ repo.description }}</p>
+<p class="brief">{{ object.repo.description }}</p>
 
-{% if object.description %}{{ object.description|textile }}{% endif %}
+<div class="description">
+{{ object.description }}
+</div>
 
 <!-- TODO:
   * Add a way to put here links to eventual documentation in ReST format
   * make md5 sums work...
   -->
   {% with last_tag.commit.committed_date|tuple_to_date as cdate %}
-  <p class="download">{% trans "Download" %}: <a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={% firstof version last_tag.name %}{% comment %}#md5={{ md5 }}{% endcomment %}">{{ object.slug }}-{% firstof version last_tag.name %}.tar.gz</a> ({{ size }} {% trans "bytes" %}), {% trans "tagged" %} {{ cdate|date:"r" }} ({{ cdate|timesince }} {% trans "ago" %})</p>
+  <p class="download">{% trans "Download" %}: <a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={% firstof version last_tag.name %}#egg={{ object.slug }}-{% firstof version last_tag.name %}">{{ object.slug }}-{% firstof version last_tag.name %}.tar.gz</a> ({{ size }} {% trans "bytes" %}), {% trans "tagged" %} {{ cdate|date:"r" }} ({{ cdate|timesince }} {% trans "ago" %})</p>
   {% endwith %}
 
   <p class="subtitle">{% trans "Previous downloads" %}</p>
@@ -36,7 +38,7 @@
     <tr><th>{% trans "package" %}</th><th>{% trans "date" %}</th></tr>
     {% for t in previous_tags %}
     <tr>
-      <td class="package"><a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}">{{ object.slug }}-{{ t.name }}.tar.gz</a></td>
+      <td class="package"><a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}#egg={{ object.slug }}-{{ t.name }}">{{ object.slug }}-{{ t.name }}.tar.gz</a></td>
       <td class="date">{{ t.commit.committed_date|tuple_to_date|date:"r" }} ({{ t.commit.committed_date|tuple_to_date|timesince }} {% trans "ago" %})</td>
     {% endfor %}
   </table>

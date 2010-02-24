@@ -14,11 +14,17 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat as _cat
 from django.utils.translation import ungettext as _n
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.encoding import smart_str, force_unicode
+from django.utils.safestring import mark_safe
+from django.conf import settings as django_settings
 
 # setup the time zone once for comparison functions
 import pytz
-TZ = pytz.UTC
-if os.environ.has_key('TZ'): TZ = pytz.timezone(os.environ['TZ'])
+TZ = pytz.timezone(getattr(django_settings, 'TIME_ZONE', 'UTC'))
+
+def tuple_to_date(d):
+  """Returns a datetime object from the weird's git date/time output."""
+  return datetime.datetime(d[0], d[1], d[2], d[3], d[4], d[5], 0, pytz.UTC)
 
 def cmp_repo_changed(r1, r2):
   """Compares two repositories w.r.t. their last changed date. Older first."""
@@ -124,3 +130,36 @@ def relative_date(t):
 
 def blob_is_text(blob):
   return blob.mime_type and (blob.mime_type.split('/')[0] == 'text')
+
+def simple_html(value):
+  """Returns simple html and mark it safe."""
+  return mark_safe(force_unicode(value))
+
+def simple_text(value):
+  """Wraps text in a simple <pre> blob."""
+  return simple_html('<pre>' + value + '</pre>')
+
+def textile(value):
+  """Converts the text data into html using textile"""
+  try:
+    import textile
+  except ImportError:
+    if django_settings.DEBUG: raise
+    return simple_text('[warning: textile is *not* available]\n' + value) 
+  else:
+    return simple_html(textile.textile(smart_str(value), encoding='utf-8', output='utf-8'))
+
+def restructuredtext(value):
+  """Converts the text data into html using docutils"""
+  try:
+    from docutils.core import publish_parts
+  except ImportError:
+    if settings.DEBUG: raise
+    return simple_text('[warning: docutils is *not* available]\n\n' + value) 
+  else:
+    docutils_settings = getattr(django_settings, 
+        "RESTRUCTUREDTEXT_FILTER_SETTINGS", {})
+    parts = publish_parts(source=smart_str(value), writer_name="html4css1", 
+        settings_overrides=docutils_settings)
+    return simple_html(parts["fragment"])
+

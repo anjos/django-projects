@@ -17,13 +17,6 @@
 {% block content %}
   <div class="project">
 
-    <!-- a few quick links to the project's features -->
-    <ul class="quicklinks">
-      {% if object.wiki_page %}<li class="wiki"><a href="{{ object.wiki_page }}">{% trans "wiki" %}</a></li>{% endif %}
-      {% if object.dsa_key %}<li class="dsa-key"><a href="{% url djpro:dsakey object.slug %}">{% trans "dsa key" %}</a></li>{% endif %}
-      {% if object.git_dir %}<li class="git"><a href="{% url djpro:view-repo %}?r={{ object.git_dir }}">{% trans "repository" %}</a></li>{% endif %}
-    </ul>
-
     {% if object.public_downloads %}
     <div class="downloads">
       <!-- <p class="downloads_header">
@@ -41,7 +34,11 @@
     {% endif %}
 
     <p class="title">{{ object.name }}</p>
-    <p class="preamble">{{ object.description|textile }}</p>
+
+    <div class="description">
+    {{ object.description }}
+    </div>
+
     {% if object.screenshot_set.count %}
     <p class="details">{% trans "Screenshots" %}</p>
       {% for f in object.screenshot_set.all %}

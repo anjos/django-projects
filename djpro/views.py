@@ -56,14 +56,54 @@ def projects_dsa_pubkey(request, slug):
 
   return HttpResponse(p.dsa_pubkey, mimetype="text/plain")
 
-def repo_list(request, template_name='djpro/repo_list.html'):
+def pypi_index(request, template_name='djpro/pypi_index.html'):
+  """Returns a site package list in the easy_install style. See documentation
+  here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
+  """
+  objects = PythonProject.objects.order_by('slug') 
+  objects = [k for k in objects if k.repo.tags]
+  return render_to_response(template_name, 
+      { 'object_list': objects, 
+        'site_domain': Site.objects.get(id=django_settings.SITE_ID).domain,
+      },
+      context_instance=RequestContext(request))
+
+def pypi_package(request, slug, version=None, 
+    template_name='djpro/pypi_package.html'):
+  """Returns a single package page in the easy_install style. See documentation
+  here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
+  """
+  object = PythonProject.objects.get(slug=slug)
+  repo = object.repo
+  tags = repo.tags
+
+  # if the project has not been tagged, give up at once
+  if not tags: raise ObjectDoesNotExist
+
+  if version: tarball = repo.archive_tar_gz(version)
+  else: tarball = repo.archive_tar_gz(tags[-1].name)
+
+  # md5 = hashlib.md5(tarball).hexdigest()
+  return render_to_response(template_name, 
+      { 
+        'object': object,
+        'repo': repo,
+        'last_tag': tags[-1],
+        'previous_tags': reversed(tags[:-1]),
+        'version': version,
+        'size': len(tarball),
+        #'md5': md5
+      },
+      context_instance=RequestContext(request))
+
+def git_list(request, template_name='djpro/repo_list.html'):
   repos = sorted(get_repos(), cmp=cmp_repo_changed, reverse=True)
   return render_to_response(template_name, 
                             {'repos': repos,},
                             context_instance=RequestContext(request))
 
-def repo_detail(request, template_name='djpro/repo.html'):
-  if not request.GET.has_key('r'): return repo_list(request) 
+def git_detail(request, template_name='djpro/repo.html'):
+  if not request.GET.has_key('r'): return git_list(request) 
   r = get_repo(request.GET['r'])
   head = request.GET.get('h', r.heads[0].name) # get default head
   c = r.commits(start=head, max_count=r.commit_count())
@@ -86,7 +126,7 @@ def repo_detail(request, template_name='djpro/repo.html'):
        'max_tags': settings.DJPRO_MAX_TAGS}, 
       context_instance=RequestContext(request))
 
-def repo_history(request, commit=None, template_name='djpro/repo_history.html'):
+def git_history(request, commit=None, template_name='djpro/repo_history.html'):
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 
   if not request.GET.has_key('b'): raise ObjectDoesNotExist
 
@@ -128,7 +168,7 @@ def repo_history(request, commit=None, template_name='djpro/repo_history.html'):
        }, 
       context_instance=RequestContext(request))
 
-def repo_commit(request, commit, template_name='djpro/repo_commit.html'):
+def git_commit(request, commit, template_name='djpro/repo_commit.html'):
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 
   r = get_repo(request.GET['r'])
   return render_to_response(template_name, 
@@ -138,7 +178,7 @@ def repo_commit(request, commit, template_name='djpro/repo_commit.html'):
                             }, 
                             context_instance=RequestContext(request))
 
-def repo_diff(request, commit, template_name='djpro/repo_diff.html'):
+def git_diff(request, commit, template_name='djpro/repo_diff.html'):
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 
   r = get_repo(request.GET['r'])
   c = r.commit(commit) 
@@ -156,9 +196,9 @@ def repo_diff(request, commit, template_name='djpro/repo_diff.html'):
                             }, 
                             context_instance=RequestContext(request))
 
-def download_tree(request, commit=None, filename=None):
-
+def git_download_tree(request, commit=None, filename=None):
   """Downloads any tree from a project."""
+
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 
   r = get_repo(request.GET['r'])
   if commit: 
@@ -176,7 +216,7 @@ def download_tree(request, commit=None, filename=None):
   
   data = r.archive_tar_gz(t.id)
    
-  retval = HttpResponse(data, mimetype='application/x-tar-gz')
+  retval = HttpResponse(data, mimetype='application/x-gtar')
 
   if not filename:
     if t.name: filename = t.name
@@ -184,11 +224,15 @@ def download_tree(request, commit=None, filename=None):
       filename = os.path.basename(r.wd).replace('.git','',1)
     filename += '-%s' % c.id[:8]
 
-  retval['Content-Disposition'] = 'attachment; filename=%s.tar.gz' % filename 
+  retval['Content-Disposition'] = 'attachment; filename=%s.tgz' % filename 
+  retval['Content-Length'] = len(data)
+  #retval['Content-MD5'] = hashlib.md5(data).hexdigest()
+
   return retval
 
-def download_release(request):
+def git_download_release(request):
   """Downloads a particular tag or the head of a certain branch."""
+
   if not request.GET.has_key('r'): raise ObjectDoesNotExist
   r = get_repo(request.GET['r'])
 
@@ -199,19 +243,19 @@ def download_release(request):
   if request.GET.has_key('tag'): #user chose a tag
     for k in r.tags: 
       if k.name == request.GET['tag']: #found tag
-        return download_tree(request, commit=k.commit.id,
+        return git_download_tree(request, commit=k.commit.id,
             filename=project_name + '-%s' % k.name)
   elif request.GET.has_key('head'): #user wants the head of a branch
     for k in r.heads:
       if k.name == request.GET['head']: #found tag
-        return download_tree(request, commit=k.commit.id,
+        return git_download_tree(request, commit=k.commit.id,
             filename=project_name + '-%s-head' % k.name)
 
   # if you get to this point the user has not provided a t or h tag, or we
   # could not find the referred tag or branch.
   raise ObjectDoesNotExist
 
-def repo_tree(request, commit=None, template_name='djpro/repo_tree.html'):
+def git_tree(request, commit=None, template_name='djpro/repo_tree.html'):
   if not request.GET.has_key('r'): raise ObjectDoesNotExist 
   r = get_repo(request.GET['r'])
   if commit: 
@@ -254,12 +298,12 @@ def find_blob(repo, path, head=None, commit=None):
   if not b: raise ObjectDoesNotExist
   return (r, c, b)
 
-def repo_raw(request, commit=None):
+def git_raw(request, commit=None):
   (r, c, b) = find_blob(request.GET.get('r', None), request.GET.get('b', None),
             request.GET.get('h', None), commit)
   return raw_blob(b[-1][1])
 
-def repo_blob(request, commit=None, template_name='djpro/repo_blob.html'):
+def git_blob(request, commit=None, template_name='djpro/repo_blob.html'):
   (r, c, b) = find_blob(request.GET.get('r', None), request.GET.get('b', None),
             request.GET.get('h', None), commit)
   if not blob_is_text(b[-1][1]): return raw_blob(b[-1][1])
@@ -272,42 +316,4 @@ def repo_blob(request, commit=None, template_name='djpro/repo_blob.html'):
                             }, 
                             context_instance=RequestContext(request))
 
-def pypi_index(request, template_name='djpro/pypi_index.html'):
-  """Returns a site package list in the easy_install style. See documentation
-  here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
-  """
-  objects = Project.objects.filter(python_package=True).order_by('slug') 
-  objects = [k for k in objects if k.repo().tags]
-  return render_to_response(template_name, 
-      { 'object_list': objects, 
-        'site_domain': Site.objects.get(id=django_settings.SITE_ID).domain,
-      },
-      context_instance=RequestContext(request))
 
-def pypi_package(request, slug, version=None, 
-    template_name='djpro/pypi_package.html'):
-  """Returns a single package page in the easy_install style. See documentation
-  here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
-  """
-  object = Project.objects.get(slug=slug)
-  repo = object.repo()
-  tags = repo.tags
-
-  # if the project has not been tagged, give up at once
-  if not tags: raise ObjectDoesNotExist
-
-  if version: tarball = repo.archive_tar_gz(version)
-  else: tarball = repo.archive_tar_gz(tags[-1].name)
-
-  # md5 = hashlib.md5(tarball).hexdigest()
-  return render_to_response(template_name, 
-      { 
-        'object': object,
-        'repo': repo,
-        'last_tag': tags[-1],
-        'previous_tags': reversed(tags[:-1]),
-        'version': version,
-        'size': len(tarball),
-        #'md5': md5
-      },
-      context_instance=RequestContext(request))

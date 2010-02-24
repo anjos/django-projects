@@ -1,8 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-  <head><title>Simple Index</title></head>
+  <head>
+    <title>Simple Index</title>
+    {% for p in object_list %}<link rel="homepage" href="{% url djpro:pypi-simple-package p.slug %}"/>
+    {% endfor %}
+  </head>
   <body>
-    {% for p in object_list %}<a href="{% url djpro:pypi-simple-package p.slug %}">{{ p.slug }}<br/></a>
+    {% for p in object_list %}<a href="{% url djpro:pypi-simple-package p.slug %}">{{ p.slug }}</a><br/>
     {% endfor %}
  </body>
 </html>
