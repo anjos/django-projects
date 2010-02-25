@@ -21,9 +21,11 @@
 <p class="title">{{ object.slug }} {% firstof version last_tag.name %}</p>
 <p class="brief">{{ object.repo.description }}</p>
 
+{% if object.description %}
 <div class="description">
 {{ object.description }}
 </div>
+{% endif %}
 
 <!-- TODO:
   * Add a way to put here links to eventual documentation in ReST format
@@ -34,7 +36,7 @@
   {% endwith %}
 
   <p class="subtitle">{% trans "Previous downloads" %}</p>
-  <table class="downloads">
+  <table class="previous_downloads">
     <tr><th>{% trans "package" %}</th><th>{% trans "date" %}</th></tr>
     {% for t in previous_tags %}
     <tr>
@@ -42,6 +44,6 @@
       <td class="date">{{ t.commit.committed_date|tuple_to_date|date:"r" }} ({{ t.commit.committed_date|tuple_to_date|timesince }} {% trans "ago" %})</td>
     </tr>
     {% endfor %}
-  </table>
-</div>
+  </table><!-- ends class="previous_downloads" -->
+</div><!-- ends class="project" -->
 {% endblock %}
