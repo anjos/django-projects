@@ -56,9 +56,21 @@ def projects_dsa_pubkey(request, slug):
 
   return HttpResponse(p.dsa_pubkey, mimetype="text/plain")
 
-def pypi_index(request, template_name='djpro/pypi_index.html'):
+def pypi_simple_index(request, template_name='djpro/pypi_simple_index.html'):
   """Returns a site package list in the easy_install style. See documentation
   here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
+  """
+  objects = PythonProject.objects.order_by('slug') 
+  objects = [k for k in objects if k.repo.tags]
+  return render_to_response(template_name, 
+      { 'object_list': objects, 
+        'site_domain': Site.objects.get(id=django_settings.SITE_ID).domain,
+        'pypi_objects': retrieve_pypi_index(),
+      },
+      context_instance=RequestContext(request))
+
+def pypi_index(request, template_name='djpro/pypi_index.html'):
+  """Lists all the Python Projects available at this site.
   """
   objects = PythonProject.objects.order_by('slug') 
   objects = [k for k in objects if k.repo.tags]

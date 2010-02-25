@@ -4,6 +4,8 @@
     <title>Simple Index</title>
     {% for p in object_list %}<link rel="homepage" href="{% url djpro:pypi-simple-package p.slug %}"/>
     {% endfor %}
+    {% for p in pypi_objects %}<link rel="homepage" href="http://pypi.python.org/simple/{{ p }}"/>
+    {% endfor %}
   </head>
   <body>
     {% for p in object_list %}<a href="{% url djpro:pypi-simple-package p.slug %}">{{ p.slug }}</a><br/>

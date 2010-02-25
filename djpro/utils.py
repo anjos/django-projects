@@ -22,6 +22,9 @@ from django.conf import settings as django_settings
 import pytz
 TZ = pytz.timezone(getattr(django_settings, 'TIME_ZONE', 'UTC'))
 
+import urllib
+from HTMLParser import HTMLParser
+
 def tuple_to_date(d):
   """Returns a datetime object from the weird's git date/time output."""
   return datetime.datetime(d[0], d[1], d[2], d[3], d[4], d[5], 0, pytz.UTC)
@@ -163,3 +166,21 @@ def restructuredtext(value):
         settings_overrides=docutils_settings)
     return simple_html(parts["fragment"])
 
+class PyPIParser(HTMLParser):
+  def __init__(self):
+    self.links = []
+    self.reset()
+
+  def handle_starttag(self, tag, attrs):
+    if tag == 'a' and attrs: self.links.append(attrs[0][1])
+
+  def handle_endtag(self, tag):
+    pass
+
+def retrieve_pypi_index():
+  """Retrieves and parses the PyPI index."""
+  index = urllib.urlopen('http://pypi.python.org/simple/')
+  parser = PyPIParser()
+  parser.feed(index.read())
+  parser.close()
+  return parser.links
