@@ -21,7 +21,7 @@
           <tr class="{% cycle 'even' 'odd' %}">
             <td class="project_name"><a href="{% url djpro:view-project p.slug %}">{{ p.name }}</a></td>
             <td class="project_brief">{{ p.repo.description }}</td> 
-            <td class="project_updated">{{ p.updated|timesize }} {% trans "ago" %}</td> 
+            <td class="project_updated">{{ p.updated|timesince }} {% trans "ago" %}</td> 
           </tr>
           {% endfor %}
         </table>
