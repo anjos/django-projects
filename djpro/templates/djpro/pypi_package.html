@@ -6,7 +6,7 @@
   {{ block.super }}
   <link href="{{ MEDIA_URL }}djpro/css/style.css" rel="stylesheet" type="text/css" media="screen" />
   {% if version %}{% ifnotequal version last_tag.name %}
-  <link rel="homepage" href="{% url djpro:pypi-package-version object.slug %}"/>
+  <link rel="homepage" href="{% url djpro:pypi-package object.slug %}"/>
   {% endifnotequal %}{% endif %}
 {% endblock %}
 
