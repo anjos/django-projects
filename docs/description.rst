@@ -3,8 +3,7 @@ integration throught GitPython. Here are a few of its features:
 
 * Supports Git through GitPython
   - Displays Git repositories, commits, blobs, trees, diffs and file history.
-  - Has colored syntax-highlighting using Pygments for displaying diffs and
-    files
+  - Has colored syntax-highlighting using Pygments for displaying diffs and files
   - Supports automated download of tagged items as well as identified commits
     and trees
 * Supports *adoc* downloads, screenshots and icons
