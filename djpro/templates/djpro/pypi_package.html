@@ -12,7 +12,11 @@
 
 {% block content %}
 <div class="project">
-<p class="navigation"><a href="{% url djpro:pypi-index %}"><span class="item">Package Index</span></a></p>
+  <p class="navigation">
+  <a href="{% url djpro:pypi-index %}">Package Index</a>
+  <a href="{% url djpro:pypi-simple-package object.slug %}">Simple List</a>
+  <a href="{% url djpro:git-repo repo.path|name %}">Project Repository</a>
+  </p>
 
 {% if version %}{% ifnotequal version last_tag.name %}
 <p class="latest">The latest version of this project is: <a href="{% url djpro:pypi-package-version object.slug last_tag.name %}">{{ object.slug }} {{ last_tag.name }}</a></p>

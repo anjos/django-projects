@@ -16,6 +16,7 @@
   <p class="intro">Optionally, use pip, which is smarter and correctly scans index pages:</p>
   <pre class="code">$ pip install -f http://{{ site_domain }}{% url djpro:pypi-simple-index %} &lt;package-name&gt;
   </pre>
+  <p class="subtitle">{% trans "Package List" %}</p>
   {% if object_list %}
     <table class="project_list">
       <tr>
