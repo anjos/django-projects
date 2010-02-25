@@ -40,6 +40,7 @@
     <tr>
       <td class="package"><a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}#egg={{ object.slug }}-{{ t.name }}">{{ object.slug }}-{{ t.name }}.tar.gz</a></td>
       <td class="date">{{ t.commit.committed_date|tuple_to_date|date:"r" }} ({{ t.commit.committed_date|tuple_to_date|timesince }} {% trans "ago" %})</td>
+    </tr>
     {% endfor %}
   </table>
 </div>
