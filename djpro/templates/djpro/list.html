@@ -15,7 +15,8 @@
           {% for p in object_list %}
           <tr class="{% cycle 'even' 'odd' %}">
             <td class="project_name"><a href="{% url djpro:view-project p.slug %}">{{ p.name }}</a></td>
-            <td class="project_description">{{ p.get_repo.description }}</td> 
+            <td class="project_brief">{{ p.repo.description }}</td> 
+            <td class="project_brief">{{ p.repo.description }}</td> 
           </tr>
           {% endfor %}
         </table>
