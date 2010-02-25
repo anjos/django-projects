@@ -15,7 +15,7 @@
   <p class="navigation">
   <a href="{% url djpro:pypi-index %}">Package Index</a>
   <a href="{% url djpro:pypi-simple-package object.slug %}">Simple List</a>
-  <a href="{% url djpro:git-repo repo.path|name %}">Project Repository</a>
+  <a href="{% url djpro:git-repo %}?r={{ repo.path|name }}">Project Repository</a>
   </p>
 
 {% if version %}{% ifnotequal version last_tag.name %}
