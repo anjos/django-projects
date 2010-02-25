@@ -65,7 +65,6 @@ def pypi_simple_index(request, template_name='djpro/pypi_simple_index.html'):
   return render_to_response(template_name, 
       { 'object_list': objects, 
         'site_domain': Site.objects.get(id=django_settings.SITE_ID).domain,
-        'pypi_objects': retrieve_pypi_index(),
       },
       context_instance=RequestContext(request))
 
