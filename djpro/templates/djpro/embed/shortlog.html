@@ -34,7 +34,7 @@
               <td class="lines-added">+{{ commit.stats.total.insertions }}</td>
               <td class="lines-removed">-{{ commit.stats.total.deletions }}</td>
               <td class="number-of-files">@{{ commit.stats.total.files }}</td>
-              {% if repo.tags %}<td class="tags">{% for t in commit|taglist:repo.tags %}<a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}" title="{% trans "download release" %} {{ t.name }}"><span class="tag">{{ t.name }}</span></a>{% endfor %}</td>{% endif %}
+              {% if repo.tags %}<td class="tags">{% for t in commit|taglist:repo.tags %}<a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}" title="{% trans "download release" %} {{ t.name }}"><span class="tag">{{ t.name }}</span></a><br/>{% endfor %}</td>{% endif %}
               <td class="summary">{{ commit.summary }}</td>
             </tr>
             {% endfor %}
