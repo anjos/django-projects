@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n markup repositories djpro_filters %}
+{% block title %}{{ object.name }} ({% trans "development" %}){% endblock %}
+
+{% block media %}
+  {{ block.super }}
+  <link href="{{ MEDIA_URL }}djpro/css/style.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block content %}
+<div class="project">
+  <p class="navigation">
+  <a href="{% url djpro:list %}">{% trans "All Projects" %}</a>
+  <a href="{% url djpro:pypi-index %}">{% trans "Python Projects" %}</a>
+  <a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "Project Repository" %}</a>
+  </p>
+
+  <p class="title">{{ object.name }} ({% trans "development" %})</p>
+  <p class="brief">{{ object.repo.description }}</p>
+
+  {% if object.description %}
+  <div class="description">
+  {{ object.description }}
+  </div>
+  {% endif %}
+
+<!-- TODO:
+  * Add a way to put here links to eventual documentation in ReST format
+  * make md5 sums work...
+  -->
+  {% with repo.heads.0.commit.committed_date|tuple_to_date as cdate %}
+  <p class="download">{% trans "Download" %}: <a href="{% url djpro:download-release %}?r={{ repo.path|name }}&head={{ repo.heads.0.name }}#egg={{ object.slug }}-{{ repo.heads.0.name }}">{{ object.slug }}-{{ repo.heads.0.name }}.tar.gz</a> ({{ size }} {% trans "bytes" %}), {% trans "committed" %} {{ cdate|date:"r" }} ({{ cdate|timesince }} {% trans "ago" %})</p>
+  {% endwith %}
+
+</div><!-- ends class="project" -->
+{% endblock %}

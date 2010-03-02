@@ -20,9 +20,32 @@ from conf import settings
 from models import *
 import hashlib
 
-def project_detail(request, slug, **kwargs):
+def project_list(request, template_name='djpro/list.html'):
+  """Returns a project list."""
+
+  objects = list(Project.objects.order_by('slug'))
+  objects.sort(cmp=lambda a, b: cmp(a.updated,b.updated), reverse=True)
+
+  return render_to_response(template_name,
+      { 'object_list': objects, 
+      },
+      context_instance=RequestContext(request))
+
+def project_detail(request, slug, template_prefix='djpro/detail', **kwargs):
 
   object = Project.objects.get(slug=slug)
+  if PythonProject.objects.filter(slug=slug): 
+    # in this case we use our PyPI specialized view for Python projects
+    return pypi_package(request, slug, **kwargs)
+    
+  elif MacProject.objects.filter(slug=slug):
+    object = object.macproject
+    template_name = template_prefix + '_mac.html'
+  else:
+    # this is a simple project
+    template_name = template_name + '.html'
+
+  # The rest is common between all projects
   r = get_repo(object.git_dir)
   head = request.GET.get('h', r.heads[0].name) # get default head
   c = r.commits(start=head, max_count=r.commit_count())
@@ -38,7 +61,7 @@ def project_detail(request, slug, **kwargs):
   except (EmptyPage, InvalidPage):
     commits = paginator.page(paginator.num_pages)
   
-  return render_to_response(kwargs['template_name'], 
+  return render_to_response(template_name, 
       {'object': object,
        'feeds': kwargs['feeds'],
        'repo': r, 
@@ -79,8 +102,28 @@ def pypi_index(request, template_name='djpro/pypi_index.html'):
       },
       context_instance=RequestContext(request))
 
+def pypi_untagged(request, slug, version=None, 
+    template_name='djpro/pypi_untagged.html', **kwargs):
+  """Returns a single package page in the easy_install style. See documentation
+  here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
+  """
+  object = PythonProject.objects.get(slug=slug)
+  repo = object.repo
+
+  tarball = repo.archive_tar_gz()
+
+  # md5 = hashlib.md5(tarball).hexdigest()
+  return render_to_response(template_name, 
+      { 
+        'object': object,
+        'repo': repo,
+        'size': len(tarball),
+        #'md5': md5
+      },
+      context_instance=RequestContext(request))
+
 def pypi_package(request, slug, version=None, 
-    template_name='djpro/pypi_package.html'):
+    template_name='djpro/pypi_package.html', **kwargs):
   """Returns a single package page in the easy_install style. See documentation
   here: http://peak.telecommunity.com/DevCenter/EasyInstall#package-index-api
   """
@@ -88,8 +131,8 @@ def pypi_package(request, slug, version=None,
   repo = object.repo
   tags = repo.tags
 
-  # if the project has not been tagged, give up at once
-  if not tags: raise ObjectDoesNotExist
+  # if the project has not been tagged, use another simpler view
+  if not tags: return pypi_untagged(request, slug, **kwargs)
 
   if version: tarball = repo.archive_tar_gz(version)
   else: tarball = repo.archive_tar_gz(tags[-1].name)

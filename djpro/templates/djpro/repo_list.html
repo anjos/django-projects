@@ -10,5 +10,13 @@
 {% block title %}{% trans "Repositories" %}{% endblock %}
 
 {% block content %}
+<div class="project">
+  <p class="navigation">
+    <a href="{% url djpro:list %}">{% trans "All Projects" %}</a>
+    <a href="{% url djpro:pypi-index %}">{% trans "Python Projects" %}</a>
+  </p>
+  <p class="title">{% trans "Git Repositories" %}</p>
+</div>
+
 {% list_bubble %}
 {% endblock %}

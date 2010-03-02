@@ -12,10 +12,6 @@ feeds[LatestDeveloperDownloadsForProject.basename] = \
 all_feeds = dict(feeds)
 all_feeds[SparkleUpdatesForProject.basename] = SparkleUpdatesForProject
 
-project_list = { 'queryset': Project.objects.all(),
-                 'template_name': 'djpro/list.html',
-               }
-
 download_detail = { 'queryset': Download.objects.filter(),
                     'template_name': 'djpro/download_detail.html',
                   }
@@ -26,8 +22,7 @@ notes_detail = { 'queryset': Download.objects.filter(),
 
 urlpatterns = patterns('',
 
-  url(r'^$', list_detail.object_list, project_list,
-     name='list'),
+  url(r'^$', project_list, name='list'),
   url(r'^feeds/(?P<url>.*)/$', 
      'django.contrib.syndication.views.feed',
      {'feed_dict': all_feeds},
@@ -47,8 +42,8 @@ urlpatterns = patterns('',
   url(r'^pypi/simple/(?P<slug>\w+)/$', pypi_package,
    {'template_name': 'djpro/pypi_simple_package.html'},
    name='pypi-simple-package'),
-  url(r'^pypi/(?P<slug>\w+)/$', pypi_package,
-   name='pypi-package'), 
+  url(r'^pypi/(?P<slug>\w+)/dev/$', pypi_untagged, name='pypi-untagged'), 
+  url(r'^pypi/(?P<slug>\w+)/$', pypi_package, name='pypi-package'), 
   url(r'^pypi/(?P<slug>\w+)/(?P<version>[\d\.]+)/$', 
    pypi_package, name='pypi-package-version'), 
 
@@ -76,10 +71,7 @@ urlpatterns = patterns('',
 
   # entry key for projects
   url(r'^(?P<slug>\w+)/$', project_detail, 
-     {'feeds': feeds.values(),
-      'template_name': 'djpro/detail.html',
-     }, 
-     name='view-project'), 
+     { 'feeds': feeds.values(), }, name='view-project'), 
 
 )
 

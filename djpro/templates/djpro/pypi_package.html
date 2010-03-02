@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load i18n markup repositories djpro_filters %}
-{% block title %}{{ object.slug }} {% firstof version last_tag.name %}{% endblock %}
+{% block title %}{{ object.name }} {% firstof version last_tag.name %}{% endblock %}
 
 {% block media %}
   {{ block.super }}
@@ -13,16 +13,17 @@
 {% block content %}
 <div class="project">
   <p class="navigation">
-  <a href="{% url djpro:pypi-index %}">Package Index</a>
-  <a href="{% url djpro:pypi-simple-package object.slug %}">Simple List</a>
-  <a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">Project Repository</a>
+  <a href="{% url djpro:list %}">{% trans "All Projects" %}</a>
+  <a href="{% url djpro:pypi-index %}">{% trans "Python Projects" %}</a>
+  <a href="{% url djpro:pypi-simple-package object.slug %}">{% trans "Simple List" %}</a>
+  <a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "Project Repository" %}</a>
   </p>
 
 {% if version %}{% ifnotequal version last_tag.name %}
 <p class="latest">The latest version of this project is: <a href="{% url djpro:pypi-package-version object.slug last_tag.name %}">{{ object.slug }} {{ last_tag.name }}</a></p>
 {% endifnotequal %}{% endif %}
 
-<p class="title">{{ object.slug }} {% firstof version last_tag.name %}</p>
+<p class="title">{{ object.name }} {% firstof version last_tag.name %}</p>
 <p class="brief">{{ object.repo.description }}</p>
 
 {% if object.description %}

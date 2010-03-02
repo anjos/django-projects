@@ -1,32 +1,22 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n repositories djpro_media djpro_tags %}
 {% block title %}{% trans "Projects" %}{% endblock %}
 
 {% block media %}
   {{ block.super }}
-  <link href="{{ MEDIA_URL }}djpro/css/style.css" rel="stylesheet" type="text/css" media="screen" />
+  <link href="{% url media "djpro/css/style.css" %}" rel="stylesheet" type="text/css" media="screen" />
+{% djpro_repository_media %}
+{% djpro_bubble_media %}
 {% endblock %}
 
 {% block content %}
-    <div class="project">
-      <p class="title">{% blocktrans %}Projects (last updated first){% endblocktrans %}</p>
-      {% if object_list %}
-        <table class="project_list">
-          <tr>
-            <th>{% trans "Name" %}</th>
-            <th>{% trans "Description" %}</th>
-            <th>{% trans "Updated" %}</th>
-          </tr>
-          {% for p in object_list %}
-          <tr class="{% cycle 'even' 'odd' %}">
-            <td class="project_name"><a href="{% url djpro:view-project p.slug %}">{{ p.name }}</a></td>
-            <td class="project_brief">{{ p.repo.description }}</td> 
-            <td class="project_updated">{{ p.updated|timesince }} {% trans "ago" %}</td> 
-          </tr>
-          {% endfor %}
-        </table>
-      {% else %}
-      <p>{% trans "No projects are available." %}</p>
-      {% endif %}
-    </div>
+<div class="project">
+  <p class="navigation">
+    <a href="{% url djpro:pypi-index %}">{% trans "Python Projects" %}</a>
+    <a href="{% url djpro:view-repo %}">{% trans "Git Repositories" %}</a>
+  </p>
+  <p class="title">{% blocktrans %}Projects (last updated first){% endblocktrans %}</p>
+</div>
+
+{% project_list_bubble %}
 {% endblock %}

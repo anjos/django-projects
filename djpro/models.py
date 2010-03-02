@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 from django.utils.translation import string_concat  as _cat
+from django.core.urlresolvers import reverse
 
 from conf import settings
 from django.conf import settings as django_settings
@@ -38,7 +39,7 @@ class BaseProject(models.Model):
 
   def _brief(self):
     """Returns the brief description of this project."""
-    return self.repo.description()
+    return self.repo.description
   brief = property(_brief)
 
   def document(self, path):
@@ -95,7 +96,10 @@ class Project(BaseProject):
 
     # get the last git commit date, in naive format (no timezone), 
     # but pay attention to the conversion!
-    latest = utils.tuple_to_date(self.repo.commits()[0].committed_date).astimezone(TZ).replace(tzinfo=None)
+    if self.repo:
+      latest = utils.tuple_to_date(self.repo.commits()[0].committed_date).astimezone(TZ).replace(tzinfo=None)
+    else:
+      latest = datetime.datetime.now()
 
     # check the update time
     if self.changed > latest: latest = self.changed
@@ -128,18 +132,12 @@ class MacProject(Project):
   
   dsa_pubkey = models.TextField(_(u'DSA project key'), null=True, blank=True, help_text=_('If you have one, insert here the <b>public</b> DSA key for this project.')) 
 
-  def _updated(self): return super(self, MacProject)._updated()
-  updated = property(_updated)
-
   class Meta:
     verbose_name = _('mac project')
     verbose_name_plural = _('mac projects')
   
 class PythonProject(Project):
   """A Project that can be installed with setuptools."""
-
-  def _updated(self): return super(self, PythonProject)._updated()
-  updated = property(_updated)
 
   class Meta:
     verbose_name = _('python project')

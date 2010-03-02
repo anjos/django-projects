@@ -4,7 +4,7 @@
   <span class="bubble">
     <span class="list">
       <table>
-        <tr class="bubble_title"><td>{% trans "Latest code changes" %}</td></tr>
+        {% if compact %}<tr class="bubble_title"><td>{% trans "Latest code changes" %}</td></tr>{% endif %}
         <tr>
           <td class="buble_contents">
             <table class="inner">
@@ -18,7 +18,7 @@
               {% endif %}
               {% for repo in repos %}
               <tr class="{% cycle 'even' 'odd' %}">
-                <td><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{{ repo.path|name }}</a></td>
+                <td class="project_name"><a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{{ repo.path|name }}</a></td>
                 {% if repo.tags %}
                 {% with repo.tags|reverse as tl %}
                 <td class="tags"><a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ tl.0.name }}" title="{% trans 'download release' %} {{ tl.0.name }}"><span class="tag">{{ tl.0.name }}</span></a></td>
@@ -32,7 +32,7 @@
                 </td>
                 {% endif %}
                 <td class="summary">{% if not compact %}{{ repo.description }}{% else %}{{ repo.description|truncatewords:"8" }}{% endif %}</td>
-                <td>{{ repo.commits.0.committed_date|relative_date }}</td>
+                <td>{{ repo.commits.0.committed_date|tuple_to_date|timesince }} {% trans "ago" %}</td>
               </tr>
               {% endfor %}
             </table>
