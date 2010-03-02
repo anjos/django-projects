@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 setup(
 
     name = "djpro",
-    version = "0.3.13", 
+    version = "0.3.14", 
     packages = find_packages(),
 
     # we also need all translation files and templates
@@ -30,7 +30,6 @@ setup(
     zip_safe=False,
 
     install_requires = [
-      'setuptools',
       'Django>=1.1',
       'docutils',
       'gitpython',
