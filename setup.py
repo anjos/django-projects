@@ -30,7 +30,6 @@ setup(
     zip_safe=False,
 
     install_requires = [
-      'setuptools',
       'Django>=1.1',
       'docutils',
       'gitpython',
