@@ -51,8 +51,18 @@ def get_repo_paths(path, match=None, recursive=True):
     for root, dirs, files in os.walk(path):
       for d in dirs:
         repo = os.path.join(root, d)
-        if is_git_repo(repo) and (match_re is None or match_re.search(d)):
+
+        subdir = False
+        for k in retval:
+          # if you identified a parent as git repo, skip all children
+          if repo.find(k[0]) == 0:
+            subdir = True
+        if subdir: continue
+
+        # if you get here, the directory is not a subdirectory of another repo
+        if is_repo(repo) and (match_re is None or match_re.search(d)):
           retval.append((repo, repo.replace(path + os.sep, '', 1)))
+
   else:
     try:
       for d in os.listdir(path):
