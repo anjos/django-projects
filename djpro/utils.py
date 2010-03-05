@@ -32,8 +32,12 @@ def cmp_repo_changed(r1, r2):
 
 def is_git_repo(d):
   """Tells if a certain directory is a readable git repository."""
-  candidate = os.path.join(d, '.git')
-  return os.path.exists(candidate) and os.access(candidate, os.R_OK)
+  try:
+    Repo(d)
+    return True
+  except:
+    pass
+  return False
 
 def get_repo_paths(path, match=None, recursive=True):
   """Returns all git repositories found under the given "path"."""
