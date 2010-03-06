@@ -1,7 +1,7 @@
 DjPro is a project management application written for Django_. It supports Git_
-integration throught GitPython_. Here are a few of its features:
+integration throught Djit_. Here are a few of its features:
 
-* Supports Git_ through GitPython_
+* Supports Git_ through Djit_
 
   - Displays Git_ repositories, commits, blobs, trees, diffs and file history.
   - Has colored syntax-highlighting using Pygments_ for displaying diffs and 
@@ -22,7 +22,7 @@ integration throught GitPython_. Here are a few of its features:
 
 .. _Django: http://www.djangoproject.com
 .. _Git: http://git-scm.com
-.. _GitPython: http://gitorious.org/git-python
+.. _Djit: http://andreanjos.org/project/djit/
 .. _Pygments: http://pygments.org
 .. _PyPI interface: http://pypi.python.org
 .. _easy_install: http://pypi.python.org/pypi/setuptools/
