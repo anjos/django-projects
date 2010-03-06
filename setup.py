@@ -30,17 +30,10 @@ setup(
     zip_safe=False,
 
     install_requires = [
-      'Django>=1.1',
+      'djit',
+      'django',
       'docutils',
-      'gitpython',
-      'PIL>=1.1.6',
-      'Pygments>=1.2',
-      'dateutils',
-      'textile',
-      ],
-
-    dependency_links = [
-      'http://docutils.sourceforge.net/docutils-snapshot.tgz',
+      'PIL',
       ],
 
     # metadata for upload to PyPI
