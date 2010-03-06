@@ -1,8 +1,9 @@
 *~
 *.pyc
 sw*
-test/sw*
-test/media
-test/project
 build/
 *.egg-info/
+test/djit
+test/djpro
+db.sql3
+*.swp
