@@ -1,57 +1,63 @@
 {% extends "base.html" %}
-{% load i18n repositories djpro_media %}
+{% load i18n djit_filters %}
 {% block title %}{% trans "Python Package Index" %}{% endblock %}
 
 {% block media %}
   {{ block.super }}
+  <link href="{% url media "djit/css/style.css" %}" rel="stylesheet" type="text/css" media="screen" />
   <link href="{% url media "djpro/css/style.css" %}" rel="stylesheet" type="text/css" media="screen" />
-{% djpro_repository_media %}
-{% djpro_bubble_media %}
 {% endblock %}
 
 {% block content %}
-<div class="project">
-  <p class="navigation">
-    <a href="{% url djpro:list %}">{% trans "All Projects" %}</a>
-  <a href="{% url djpro:view-repo %}">{% trans "Git Repositories" %}</a>
-  </p>
-  <p class="title">{% trans "Python Package Index" %}</p>
-  <p class="intro">{% blocktrans with object_list|length as counter %}This is my private python package repository. It presently contains {{ counter }} packages. Only tagged packages are shown in this index. To install a package from this repository use: {% endblocktrans %}</p>
-  <pre class="code">$ easy_install -f http://{{ site_domain }}{% url djpro:pypi-simple-index %}&lt;package-name&gt; &lt;package-name&gt; 
-  </pre>
-  <p class="intro">Optionally, use pip, which is smarter and correctly scans index pages:</p>
-  <pre class="code">$ pip install -f http://{{ site_domain }}{% url djpro:pypi-simple-index %} &lt;package-name&gt;
-  </pre>
-  <p class="subtitle">{% trans "Package List" %}</p>
+<div class="project djit">
+
+  <table class="layout">
+    <tr class="top">
+      <td class="layout navigation">
+        <p class="navigation">
+          <a href="{% url djpro:list %}">{% trans "All Projects" %}</a>
+          <a href="{% url djit:list %}">{% trans "Git Repositories" %}</a>
+        </p>
+      </td>
+    </tr>
+    <tr class="bottom">
+      <td class="layout list">
+
+        <p class="title">{% trans "Python Package Index" %}</p>
+
+        <p class="intro">{% blocktrans with object_list|length as counter %}This is my private python package repository. It presently contains {{ counter }} packages. Only tagged packages are shown in this index. To install a package from this repository use: {% endblocktrans %}</p>
+
+        <pre class="code">$ easy_install -f http://{{ site_domain }}{% url djit:view-simple-index %}&lt;package-name&gt; &lt;package-name&gt; 
+        </pre>
+
+        <p class="intro">Optionally, use pip, which is smarter and correctly scans index pages:</p>
+
+        <pre class="code">$ pip install -f http://{{ site_domain }}{% url djit:view-simple-index %} &lt;package-name&gt;
+        </pre>
+
+        <p class="subtitle">{% trans "Package List" %}</p>
+
+        <table class="list">
+          {% if not compact %}
+          <tr>
+            <th>{% trans "Last change" %}</th>
+            <th>{% trans "Package" %}</th>
+            <th>{% trans "Description" %}</th>
+          </tr>
+          {% endif %}
+          {% for p in object_list %}
+          {% with p.vc.git.tags|last as last_tag %}
+          <tr class="{% cycle 'even' 'odd' %}">
+            <td class="project_update">{{ last_tag.commit.committed_date|to_datetime|date:"Y-m-d H:i:s O" }}</td>
+            <td class="project_name"><a href="{% url djpro:pypi-package p.vc.slug %}">{{ p.vc.slug }} {{ last_tag.name }}</a></td>
+            <td class="summary">{% if not compact %}{{ p.vc.brief }}{% else %}{{ p.vc.brief|truncatewords:"8" }}{% endif %}</td>
+          </tr>
+          {% endwith %}
+          {% endfor %}
+        </table>
+      </td>
+    </tr>
+  </table>
+            
 </div>
-<span class="repository">
-  <span class="bubble">
-    <span class="list">
-      <table>
-        <tr>
-          <td class="buble_contents">
-            <table class="inner">
-              {% if not compact %}
-              <tr>
-                <th>{% trans "Last change" %}</th>
-                <th>{% trans "Package" %}</th>
-                <th>{% trans "Description" %}</th>
-              </tr>
-              {% endif %}
-              {% for p in object_list %}
-              {% with p.repo.tags|last as last_tag %}
-              <tr class="{% cycle 'even' 'odd' %}">
-                <td class="project_update">{{ last_tag.commit.committed_date|tuple_to_date|date:"Y-m-d H:i:s O" }}</td>
-                <td class="project_name"><a href="{% url djpro:pypi-package-version p.slug last_tag.name %}">{{ p.slug }} {{ last_tag.name }}</a></td>
-                <td class="summary">{% if not compact %}{{ p.repo.description }}{% else %}{{ p.repo.description|truncatewords:"8" }}{% endif %}</td>
-              </tr>
-              {% endwith %}
-              {% endfor %}
-            </table>
-          </td>
-        </tr>
-      </table>
-    </span><!-- ends class="list" -->
-  </span><!-- ends class="bubble" -->
-</span><!-- ends class="repository" -->
 {% endblock %}

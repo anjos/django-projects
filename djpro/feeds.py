@@ -16,7 +16,7 @@ class LatestDownloadsForProject(Feed):
     if len(bits) != 1:
       raise ObjectDoesNotExist
     try:
-      return Project.objects.get(slug=bits[0])
+      return Project.objects.get(vc__slug=bits[0])
     except:
       raise ObjectDoesNotExist
 
@@ -28,7 +28,7 @@ class LatestDownloadsForProject(Feed):
         {'project': obj.name})
 
   def link(self, obj):
-    return reverse('djpro:detail', args=(obj.slug,))
+    return reverse('djpro:detail', args=(obj.vc.slug,))
 
   title_template = "djpro/feeds/downloads_title.html"
   description_template = "djpro/feeds/downloads_description.html"
@@ -90,7 +90,7 @@ class SparkleUpdatesForProject(Feed):
     if len(bits) != 1:
       raise ObjectDoesNotExist
     try:
-      return Project.objects.get(slug=bits[0])
+      return Project.objects.get(vc__slug=bits[0])
     except:
       raise ObjectDoesNotExist
 
@@ -102,7 +102,7 @@ class SparkleUpdatesForProject(Feed):
         {'project':obj.name})
 
   def link(self, obj):
-    return reverse('djpro:detail', args=(obj.slug,))
+    return reverse('djpro:detail', args=(obj.vc.slug,))
 
   title_template = "djpro/feeds/sparkle_title.html"
   description_template = "djpro/feeds/sparkle_description.html"

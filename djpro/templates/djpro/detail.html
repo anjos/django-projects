@@ -1,71 +1,51 @@
 {% extends "base.html" %}
-{% load i18n markup repository_bubble djpro_media %}
+{% load i18n %}
 
 {% block media %}
 {{ block.super }}
+<link href="{{ MEDIA_URL }}djit/css/style.css" rel="stylesheet" type="text/css" media="screen" />
 <link href="{{ MEDIA_URL }}djpro/css/style.css" rel="stylesheet" type="text/css" media="screen" />
 <!-- Feeds go here if the caller has provided so -->
 {% for feed in feeds %}
-<link rel="alternate" type="application/atom+xml" title="{{ feed.title }}" href="/project/feeds/{{ feed.basename }}/{{ object.slug }}"/>
+<link rel="alternate" type="application/atom+xml" title="{{ feed.title }}" href="/project/feeds/{{ feed.basename }}/{{ object.vc.slug }}"/>
 {% endfor %}
-{% djpro_repository_media %}
-{% djpro_bubble_media %}
 {% endblock %}
 
 {% block title %}{% trans "Project" %} :: {{ object }}{% endblock %}
 
 {% block content %}
-  <div class="project">
+<div class="project djit">
 
-    {% if object.public_downloads %}
-    <div class="downloads">
-      <!-- <p class="downloads_header">
-      <a href="downloads" title="{% trans 'Click here for a exhaustive listing of all downloads available for this project' %}">{% trans "Downloads" %}</a></p> -->
-      {% for f in object.public_downloads %}
-      <a class="download_link" href="{% url djpro:download f.id %}" title="{% trans 'Download the latest version' %}">
-        <p class="download_entry">
-        <span class="download_decoration"></span>
-        <font class="download_name">{{ f.name }}</font><br />
-        <font class="download_detail">{{ f.data.size }} {% trans "bytes" %}, {{ f.date|date:"j/F/Y" }}</font>
-        </p>
-      </a>
-      {% endfor %}
-    </div>
-    {% endif %}
-
-    <p class="title">{{ object.name }}</p>
-
-    <div class="description">
-    {{ object.description }}
-    </div>
-
-    {% if object.screenshot_set.count %}
-    <p class="details">{% trans "Screenshots" %}</p>
-      {% for f in object.screenshot_set.all %}
-      <a class="screenshot_link" href="{{ f.data.url }}" title="{% trans 'Click for a larger version' %}"><img class="screenshot_img" src="{{ f.data.url }}" height="200px" alt="{{ f.data.name }}"></img></a>
-      <p class="screenshot_caption">{{ f.description }}</p>
-      {% endfor %}
-    {% endif %}
-
-    <p class="details">{% trans "Repository" %}</p>
-    {% if object.git_dir %}
-    <div class="repository">
-      <table class="layout">
-        <tr class="top">
-          <td class="layout" colspan="2"></td>
-        </tr><!-- class="top" -->
-        <tr class="middle">
-          <td class="layout left">
-            {% summary_bubble repo %}
-          </td>
-          <td class="layout right">
-            {% tag_bubble repo 6 %}
-          </td>
-        </tr>
-      </table><!-- class="layout" -->
-    </div><!-- class="repository" -->
-    {% endif %}
-
+  {% if object.public_downloads %}
+  <div class="downloads">
+    <!-- <p class="downloads_header">
+    <a href="downloads" title="{% trans 'Click here for a exhaustive listing of all downloads available for this project' %}">{% trans "Downloads" %}</a></p> -->
+    {% for f in object.public_downloads %}
+    <a class="download_link" href="{% url djpro:download f.id %}" title="{% trans 'Download the latest version' %}">
+      <p class="download_entry">
+      <span class="download_decoration"></span>
+      <font class="download_name">{{ f.name }}</font><br />
+      <font class="download_detail">{{ f.data.size }} {% trans "bytes" %}, {{ f.date|date:"j/F/Y" }}</font>
+      </p>
+    </a>
+    {% endfor %}
   </div>
+  {% endif %}
+
+  <p class="title">{{ object.name }}</p>
+
+  <div class="description">
+  {{ object.description }}
+  </div>
+
+  {% if object.screenshot_set.count %}
+  <p class="details">{% trans "Screenshots" %}</p>
+    {% for f in object.screenshot_set.all %}
+    <a class="screenshot_link" href="{{ f.data.url }}" title="{% trans 'Click for a larger version' %}"><img class="screenshot_img" src="{{ f.data.url }}" height="200px" alt="{{ f.data.name }}"></img></a>
+    <p class="screenshot_caption">{{ f.description }}</p>
+    {% endfor %}
+  {% endif %}
+
+</div>
 {% endblock %}
 

@@ -4,13 +4,14 @@
 
 {% block media %}
   {{ block.super }}
+  <link href="{{ MEDIA_URL }}djit/css/style.css" rel="stylesheet" type="text/css" media="screen" />
   <link href="{{ MEDIA_URL }}djpro/css/style.css" rel="stylesheet" type="text/css" media="screen" />
 {% endblock %}
 
 {% block title %}{% trans "Project" %} :: {{ object.project.name }} :: {% trans "Version" %} {{ object.version }}{% endblock %}
 
 {% block content %}
-<div class="project">
+<div class="project djit">
   <p class="title">{{ object.project.name }} {% trans "version" %} {{ object.version }}</p>
 
   <p class="details">{% trans "Changelog" %}</p>

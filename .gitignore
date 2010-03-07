@@ -7,3 +7,4 @@ test/djit
 test/djpro
 db.sql3
 *.swp
+scripts/bootstrap.py

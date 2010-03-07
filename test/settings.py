@@ -103,6 +103,7 @@ INSTALLED_APPS = (
   'rosetta',
 
   # These are mine
+  'djit',
   PROJECT,
 )
 

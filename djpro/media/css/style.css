@@ -1,44 +1,4 @@
-.project p.title {
-  margin-top: 1em;
-  font-size: 2.0em;
-  font-weight: bold;
-}
-
-.project p.details {
-  margin-top: 1em;
-  font-size: 1.5em;
-  font-weight: bold;
-}
-
-.project table {
-  width: 100%;
-  padding: 5px;
-}
-
-.project table tr.even {
-  background-color: #ddd;
-}
-
-.project table.project_list {
-  font-size: 14px;
-}
-
-.project table.project_list tr {
-  height: 50px;
-}
-
-.project table.project_list td {
-  padding: 3px;
-}
-
-.project table.project_list tr.even {
-  background-color: #cef;
-}
-
-.project table.project_list tr.odd {
-  background-color: #eee;
-}
-
+/* These are for Simple/MacOSX downloads */
 .project .downloads {
   float: right;
 }
@@ -87,36 +47,52 @@
   font-size: 0.6em;
 }
 
-/* navigation links for each project, on the top of the detail page */
-.project ul.quicklinks {
-  text-align: right;
-  margin: 0em 0.1em 0em 0em;
-  height: 1.5em;
+.project p.intro {
+  margin-bottom: 1em;
+  margin-top: 0.5em;
 }
 
-.project ul.quicklinks li {
-  display: inline;
-  list-style: none;
-  background-color: #484;
-  border-color: #484;
+.project pre.code {
+  padding-top: 0.5em;
+  text-indent: 1em;
+  background-color: black;
+  width: 100%;
+  color: #eee;
+  margin-bottom: 0.5em;
+}
+
+.project p.brief {
+  background-color: #eee;
+  padding: 1em;
+  text-align: center;
+  font-style: italic;
+  margin-bottom: 1em;
+}
+
+.project p.download {
+  background-color: #9f9;
+  width: 30%;
+  padding: 0.5em;
+  margin-bottom: 1em;
+}
+
+.project .description {
+  border: 1px solid #eee;
+  padding: 0.5em;
+  margin-bottom: 1em;
+}
+
+.project table.previous_downloads, .project table.project_list {
+  border: 1px solid #eee;
+}
+
+.project table.previous_downloads th, .project table.project_list th {
+  text-align: left;
+  background-color: gray;
   color: white;
-  font-family: arial, helvetica, sans;
-  font-weight: bold;
-  font-size: 0.9em;
   padding: 0.1em;
-  border-style: outset;
-  border-width: 2px;
 }
 
-.project ul.quicklinks li:hover {
-  background-color: #262;
-  border-color: #262;
-  border-style: inset;
+.project td.detail > p.title {
+  text-align: center;
 }
-
-.project ul.quicklinks a {
-  text-decoration: none;
-  color: #fff;
-  padding: 0.3em;
-}
-

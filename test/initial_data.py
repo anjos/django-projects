@@ -46,3 +46,16 @@ for a, b in get_repo_paths(settings.DJIT_GIT_BASE_DIRECTORY, recursive=True):
   r = Repository(slug=a, subdir=b)
   r.save()
   print 'Created', r
+
+# This bit will create the Projects themselves
+from djpro.models import *
+
+for k in Repository.objects.all():
+  name = k.slug.replace('_','.').replace('-', ' ').capitalize()
+  if PythonProject.objects.filter(vc=k):
+    o = PythonProject.objects.get(vc=k)
+    print 'Deleting', o
+    o.delete()
+  p = PythonProject(name=name, vc=k)
+  p.save()
+  print 'Created', p

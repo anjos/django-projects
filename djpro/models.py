@@ -3,15 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 from django.utils.translation import string_concat  as _cat
 from django.core.urlresolvers import reverse
-
-from conf import settings
-from django.conf import settings as django_settings
 import os, datetime
-from db.fields import GitRepoField
-import utils
-
-import pytz
-TZ = pytz.timezone(getattr(django_settings, 'TIME_ZONE', 'UTC'))
 
 class BaseProject(models.Model):
   """Describes a software project.
@@ -24,65 +16,9 @@ class BaseProject(models.Model):
   
   name = models.CharField(_(u'Project name'), max_length=128, help_text=_(u'Insert a short, meaningful unique name for your project.'))
 
-  slug = models.SlugField(_(u'Slug'), max_length=32, primary_key=True, help_text=_(u'Insert a short, meaningful unique slug for your project. Only letters, digits and underscores.'))
+  vc = models.ForeignKey('djit.Repository', help_text=_(u'Choose the repository to do version-control on this project.'), null=False, unique=True) 
 
   changed = models.DateTimeField(_(u'Last update'), auto_now_add=True, help_text=_(u'The date and time of the last update of this project description.'))
-
-  git_dir = GitRepoField(_(u'Git repository'), path=settings.DJPRO_GIT_BASE_DIRECTORY, recursive=True, max_length=512, help_text=_(u'Choose the git directory containing your project.'), null=True, blank=True)
-
-  description_path = models.CharField(_(u'Description file path'), max_length=512, help_text=_(u'Insert the path relative to the repository root, pointing to a (marked-up) description of this project. If this file exists, it will be used as a project description.'), null=True, blank=True, default='docs/description.rst')
-
-  def _repo(self):
-    """Returns the Git repository as a python object that can be queried."""
-    return utils.get_repo(self.git_dir)
-  repo = property(_repo)
-
-  def _brief(self):
-    """Returns the brief description of this project."""
-    return self.repo.description
-  brief = property(_brief)
-
-  def document(self, path):
-    """Returns an html or text snippets found on the path above or empty.
-
-    This method will search inside the git repository for the path described at
-    the (string) input variable "path". If it finds one, it will check the
-    extension and apply a markup conversion into html if it finds fit.
-
-    Here are the extensions that can be understood:
-    rst -- restructured text markup
-    textile -- textile markup
-    html -- html code (no conversion)
-    txt -- simple text (no conversion, use <pre> tags)
-    """
-    try:
-      path = path.split(os.sep)
-      tree = self.repo.tree()
-      for k in path[:-1]: tree = tree.get(k)
-      blob = tree.get(path[-1])
-      extension = path[-1].rsplit('.',1)[-1]
-      if extension in ('rst',):
-        return utils.restructuredtext(blob.data)
-      elif extension in ('textile',):
-        return utils.textile(blob.data)
-      elif extension in ('html',):
-        return utils.simple_html(blob.data)
-      else: 
-        return utils.simple_text(blob.data)
-
-    except KeyError:
-      return u''
-
-  def _description(self):
-    """Returns the registered description of this project."""
-    return self.document(self.description_path)
-  description = property(_description)
-
-  # make it translatable
-  class Meta:
-    abstract = True
-    verbose_name = _('project')
-    verbose_name_plural = _('projects')
 
 class Project(BaseProject):
   """A Simple project with normal downloads, icons and screenshots."""
@@ -96,10 +32,10 @@ class Project(BaseProject):
 
     # get the last git commit date, in naive format (no timezone), 
     # but pay attention to the conversion!
-    if self.repo:
-      latest = utils.tuple_to_date(self.repo.commits()[0].committed_date).astimezone(TZ).replace(tzinfo=None)
+    if self.vc:
+      latest = self.vc.updated.replace(tzinfo=None)
     else:
-      latest = datetime.datetime.now()
+      latest = datetime.datetime.min
 
     # check the update time
     if self.changed > latest: latest = self.changed
@@ -125,7 +61,7 @@ class Project(BaseProject):
   public_downloads = property(_public_downloads)
 
   def __unicode__(self):
-    return self.name  
+    return ugettext(u'Project \'%(name)s\'' % {'name': self.name})
 
 class MacProject(Project):
   """A Project that can be installed with sparkle and runs on OSX."""
@@ -145,7 +81,7 @@ class PythonProject(Project):
 
 # Place project files in a specific project directory 
 def upload_path(instance, filename):
-  path = os.path.join('projects', instance.project.slug)
+  path = os.path.join('projects', instance.project.vc.slug)
   if isinstance(instance, Download): path = os.path.join(path, 'downloads')
   if isinstance(instance, Screenshot): path = os.path.join(path, 'screenshots')
   if isinstance(instance, Icon): path = os.path.join(path, 'icons')

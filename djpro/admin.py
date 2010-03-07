@@ -16,11 +16,11 @@ def count_downloads(instance):
 count_downloads.short_description = _(u'Public downloads')
 
 class ProjectAdmin(admin.ModelAdmin):
-  list_display = ('name', Project._updated, 'git_dir', count_downloads, count_all_downloads)
+  list_display = ('name', Project._updated, 'vc', count_downloads, count_all_downloads)
   list_filter = ['changed', 'name']
   list_per_page = 10
   ordering = ['-changed']
-  search_fields = ['name', 'git_dir']
+  search_fields = ['name', 'vc']
   date_hierarchy = 'changed'
     
 admin.site.register(PythonProject, ProjectAdmin)

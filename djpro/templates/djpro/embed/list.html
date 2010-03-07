@@ -1,0 +1,34 @@
+{%load i18n %}
+{% comment %}Requires the list of projects in "projects"{% endcomment %}
+
+{% if not compact %}<p class="title">{% trans "Latest software activities" %}</p>{% endif %}
+
+<table class="list">
+  {% if not compact %}
+  <tr>
+    <th>{% trans "Project" %}</th>
+    <th>{% trans "Version" %}</th>
+    <th>{% trans "Description" %}</th>
+    <th>{% trans "Last change" %}</th>
+  </tr>
+  {% endif %}
+  {% for p in projects %}
+  <tr class="{% cycle 'even' 'odd' %}">
+    <td class="project_name"><a href="{% url djpro:view-project p.vc.slug %}">{{ p.name }}</a></td>
+    {% if p.vc.git.tags %}
+    {% with p.vc.git.tags|last as tl %}
+    <td class="tags"><span class="tag"><a href="{% url djit:download-tag p.vc.slug tl.name %}" title="{% trans 'download release' %} {{ tl.name }}">{{ tl.name }}</a></span></td>
+    {% endwith %}
+    {% else %}
+    {% comment %}If the user has no tags, we offer the heads{% endcomment %}
+    <td class="heads">
+      {% for head in p.vc.git.heads %}
+      <span class="head"><a href="{% url djit:download-head p.vc.slug head.name %}" title="{% trans 'download head' %} {{ head.name }}">{{ head.name }}</a></span><br/>
+      {% endfor %}
+    </td>
+    {% endif %}
+    <td class="summary">{% if not compact %}{{ p.vc.brief }}{% else %}{{ p.vc.brief|truncatewords:"8" }}{% endif %}</td>
+    <td>{{ p.updated|timesince }} {% trans "ago" %}</td> 
+  </tr>
+  {% endfor %}
+</table>

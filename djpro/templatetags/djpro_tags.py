@@ -10,9 +10,9 @@ from django import template
 register = template.Library()
 from djpro.models import *
 
-@register.inclusion_tag('djpro/embed/project_list_bubble.html')
-def project_list_bubble(max_projects=0, compact=False):
-  objects = list(Project.objects.order_by('slug'))
+@register.inclusion_tag('djpro/embed/list.html')
+def djpro_list(max_projects=0, compact=False):
+  objects = list(Project.objects.order_by('name'))
   objects.sort(cmp=lambda a, b: cmp(a.updated,b.updated), reverse=True)
   if max_projects > 0: objects = objects[:max_projects] 
   return {'projects': objects, 'compact': compact}

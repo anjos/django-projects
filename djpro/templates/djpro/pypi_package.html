@@ -1,54 +1,73 @@
 {% extends "base.html" %}
-{% load i18n markup repositories djpro_filters %}
-{% block title %}{{ object.name }} {% firstof version last_tag.name %}{% endblock %}
+{% load i18n djit_filters %}
+{% block title %}{{ object.name }}{% endblock %}
 
 {% block media %}
   {{ block.super }}
+  <link href="{{ MEDIA_URL }}djit/css/style.css" rel="stylesheet" type="text/css" media="screen" />
   <link href="{{ MEDIA_URL }}djpro/css/style.css" rel="stylesheet" type="text/css" media="screen" />
-  {% if version %}{% ifnotequal version last_tag.name %}
-  <link rel="homepage" href="{% url djpro:pypi-package object.slug %}"/>
-  {% endifnotequal %}{% endif %}
 {% endblock %}
 
 {% block content %}
-<div class="project">
-  <p class="navigation">
-  <a href="{% url djpro:list %}">{% trans "All Projects" %}</a>
-  <a href="{% url djpro:pypi-index %}">{% trans "Python Projects" %}</a>
-  <a href="{% url djpro:pypi-simple-package object.slug %}">{% trans "Simple List" %}</a>
-  <a href="{% url djpro:view-repo %}?r={{ repo.path|name }}">{% trans "Project Repository" %}</a>
-  </p>
-
-{% if version %}{% ifnotequal version last_tag.name %}
-<p class="latest">The latest version of this project is: <a href="{% url djpro:pypi-package-version object.slug last_tag.name %}">{{ object.slug }} {{ last_tag.name }}</a></p>
-{% endifnotequal %}{% endif %}
-
-<p class="title">{{ object.name }} {% firstof version last_tag.name %}</p>
-<p class="brief">{{ object.repo.description }}</p>
-
-{% if object.description %}
-<div class="description">
-{{ object.description }}
-</div>
-{% endif %}
-
-<!-- TODO:
-  * Add a way to put here links to eventual documentation in ReST format
-  * make md5 sums work...
-  -->
-  {% with last_tag.commit.committed_date|tuple_to_date as cdate %}
-  <p class="download">{% trans "Download" %}: <a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={% firstof version last_tag.name %}#egg={{ object.slug }}-{% firstof version last_tag.name %}">{{ object.slug }}-{% firstof version last_tag.name %}.tar.gz</a> ({{ size }} {% trans "bytes" %}), {% trans "tagged" %} {{ cdate|date:"r" }} ({{ cdate|timesince }} {% trans "ago" %})</p>
-  {% endwith %}
-
-  <p class="subtitle">{% trans "Previous downloads" %}</p>
-  <table class="previous_downloads">
-    <tr><th>{% trans "package" %}</th><th>{% trans "date" %}</th></tr>
-    {% for t in previous_tags %}
-    <tr class="{% cycle "even" "odd" %}">
-      <td class="package"><a href="{% url djpro:download-release %}?r={{ repo.path|name }}&tag={{ t.name }}#egg={{ object.slug }}-{{ t.name }}">{{ object.slug }}-{{ t.name }}.tar.gz</a></td>
-      <td class="date">{{ t.commit.committed_date|tuple_to_date|date:"r" }} ({{ t.commit.committed_date|tuple_to_date|timesince }} {% trans "ago" %})</td>
+<div class="project djit">
+  <table class="layout">
+    <tr class="top">
+      <td class="layout navigation">
+        <p class="navigation">
+          <a href="{% url djpro:list %}">{% trans "All Projects" %}</a>
+          <a href="{% url djpro:pypi-index %}">{% trans "Python Projects" %}</a>
+          <a href="{% url djit:view-simple-package object.vc.slug %}">{% trans "Simple List" %}</a>
+          <a href="{% url djit:view-repo object.vc.slug %}">{% trans "Project Repository" %}</a>
+        </p>
+      </td>
     </tr>
-    {% endfor %}
-  </table><!-- ends class="previous_downloads" -->
+    <tr class="bottom">
+      <td class="layout detail">
+
+        <p class="title">{{ object.name }}</p>
+
+        <p class="brief">{{ object.vc.brief }}</p>
+
+        {% if object.vc.description %}
+        <div class="description">
+        {{ object.vc.description }}
+        </div>
+        {% endif %}
+
+        {% comment %}
+          * Add a way to put here links to eventual documentation in ReST format
+          * make md5 sums work...
+        {% endcomment %}
+
+        {% if tags %}
+        {% with tags|first as last_tag %}
+        {% with last_tag.commit.committed_date|to_datetime as cdate %}
+        <p class="download">{% trans "Download" %}: <a href="{% url djit:download-tag object.vc.slug last_tag.name %}">{{ object.vc.slug }}-{{ last_tag.name }}.tar.gz</a> ({{ size }} {% trans "bytes" %}), {% trans "tagged" %} {{ cdate|date:"r" }} ({{ cdate|timesince }} {% trans "ago" %})</p>
+        {% endwith %}
+        {% endwith %}
+        {% else %}
+        {% with object.vc.git.heads.0.commit.committed_date|to_datetime as cdate %}
+        <p class="download">{% trans "Download" %}: <a href="{% url djit:download-head object.vc.slug object.vc.git.heads.0.name %}">{{ object.vc.slug }}-{{ object.vc.git.heads.0.name }}-head.tar.gz</a> ({{ size }} {% trans "bytes" %}), {% trans "committed" %} {{ cdate|date:"r" }} ({{ cdate|timesince }} {% trans "ago" %})</p>
+        {% endwith %}
+        {% endif %}
+
+        {% with tags|slice:"1:" as previous_tags %}
+        {% if previous_tags %}
+        <p class="subtitle">{% trans "Previous downloads" %}</p>
+        <table class="previous_downloads">
+          <tr><th>{% trans "package" %}</th><th>{% trans "date" %}</th></tr>
+          {% for t in previous_tags %}
+          <tr class="{% cycle "even" "odd" %}">
+            <td class="package"><a href="{% url djit:download-tag object.vc.slug t.name %}">{{ object.vc.slug }}-{{ t.name }}.tar.gz</a></td>
+            <td class="date">{{ t.commit.committed_date|to_datetime|date:"r" }} ({{ t.commit.committed_date|to_datetime|timesince }} {% trans "ago" %})</td>
+          </tr>
+          {% endfor %}
+        </table><!-- ends class="previous_downloads" -->
+        {% endif %}
+        {% endwith %}
+      </td>
+    </tr>
+  </table>
+
 </div><!-- ends class="project" -->
 {% endblock %}
